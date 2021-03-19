@@ -1,10 +1,9 @@
 import pandas as pd
 import os
 
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/all_cluster_comb'  # 这边路径记得改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_20170101-20210228'  # 这边路径记得改
 weight_way = os.listdir(data_pat)
-weight_way.remove('simple_avg')  # 记得修改
-weight_way.remove('perf_summary.csv')  # 记得修改
+weight_way.remove('all_fac_20170101-20210228.pkl')  # 记得修改
 
 results_perf = {}
 results_hperf = {}

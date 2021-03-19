@@ -9,9 +9,9 @@ import time
 
 begin_date = '2017-01-01'  # 记得修改
 end_date = '2020-08-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/all_cluster_comb'  # 这边路径记得改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_alex_20170101-20210228'  # 这边路径记得改
 pm_pat = 'eq_tvwap'  # 记得修改
-fac_data = pd.read_pickle(data_pat + '/simple_avg/1.pkl')  # 记得修改
+fac_data = pd.read_pickle(data_pat + '/all_fac_alex_20170101-20210228.pkl')  # 记得修改
 
 # 组合权重设置（一）：使用优化函数
 def get_opm_weight_individual(signal=pd.DataFrame(), start_date='2017-01-01', end_date='2020-08-31',
@@ -89,3 +89,9 @@ def strategy_backtest_eq(signal):
 # strategy_backtest_opm(fac_data)
 get_equal_weight(fac_data)
 strategy_backtest_eq(fac_data)
+
+# strategy(7): li, strategy(8): zhao, strategy(9): alex
+# fac_data = pd.read_pickle('E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_wang_20170101-20210228/all_fac_wang1_20170101-20210228.pkl')
+# len(fac_data)
+# len([len(v) for k, v in fac_data.items() if len(v) == 1009])
+# [k for k, v in fac_data.items() if len(v) < 1009]
