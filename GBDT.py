@@ -1,4 +1,4 @@
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 import pandas as pd
 from ft_platform.utils import utils_calculation as uc
 from utils_func import query_data
@@ -11,7 +11,7 @@ import numpy as np
 roll_window = 240
 pred_window = 1
 begin = '2017-01-01'
-end = '2020-08-31'
+end = '2017-12-31'
 
 name_pat = 'E:/Share/FengWang/Alpha/mine/'
 hfmf_name = pd.read_pickle(name_pat + 'hfmf_factor/cluster_name.pkl')
@@ -50,32 +50,16 @@ for k, v in factor_value_adj.items():
     new_f[k] = new_v
 new_f = pd.concat(new_f.values(), axis=1)
 
-
-# 滚动生成上涨概率预测
-prediction = {}
-for i in np.arange((roll_window + pred_window), len(ud_tag) + 1, 1):
-    ud_tag_temp = ud_tag.iloc[(i - roll_window - pred_window):(i - pred_window), :]
-    a = pd.DataFrame(ud_tag_temp.stack())
-    a.columns = ['ud']
-    train_df = pd.concat([new_f, a], join='inner', axis=1)
-    test_df = new_f.loc[ud_tag.index[i - 1]]
-    # 随机森林前的数据处理
-    train_df = train_df.dropna(how='any')
-    x = train_df.iloc[:, :-1]
-    y = train_df.iloc[:, -1]
-    # 随机森林
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    clf = RandomForestClassifier(n_estimators=20, max_depth=3, min_samples_split=50, min_samples_leaf=20).fit(x.values, y.values)
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    print("correct rate: ", clf.score(x.values, y.values))
-    print(clf.feature_importances_[clf.feature_importances_ > 0].shape)
-    pred = clf.predict_proba(test_df.values)[:, 1]  # 未来n日涨的概率的预测值
-    prediction[ud_tag.index[i - 1]] = pd.DataFrame(pred[np.newaxis, :], index=[ud_tag.index[i - 1]], columns=test_df.index)
-    print(ud_tag.index[i - 1])
-
-prediction = pd.concat(prediction.values())
-pred_result = {}
-pred_result['240_1'] = prediction
-f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/ml_comb/random_forest/240_1.pkl', 'wb')  # 记得修改
-pickle.dump(pred_result, f, -1)
-f.close()
+a = pd.DataFrame(ud_tag.stack())
+a.columns = ['ud']
+train_df = pd.concat([new_f, a], join='inner', axis=1)
+# 梯度提升树前的数据处理
+train_df = train_df.dropna(how='any')
+x = train_df.iloc[:, :-1]
+y = train_df.iloc[:, -1]
+print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+clf = GradientBoostingClassifier(n_estimators=5, learning_rate=0.5, max_depth=3,
+                                 min_samples_split=100, min_samples_leaf=50).fit(x.values, y.values)
+print(clf.score(x.values, y.values))
+print(clf.feature_importances_[clf.feature_importances_ > 0].shape)
+print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
