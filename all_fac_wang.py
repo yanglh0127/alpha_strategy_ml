@@ -32,10 +32,11 @@ for summa in mine_summary:
                                                  uc.sign(summa['perf'][list(summa['perf'].keys())[0]]['ic-mean'])
 
 # 拆解
-factor_value_adj1 = {k: factor_value_adj[k] for k in fac_name[0:200]}
-factor_value_adj2 = {k: factor_value_adj[k] for k in fac_name[200:400]}
-factor_value_adj3 = {k: factor_value_adj[k] for k in fac_name[400:600]}
-factor_value_adj4 = {k: factor_value_adj[k] for k in fac_name[600:845]}
+new_name = list(factor_value_adj.keys())
+factor_value_adj1 = {k: factor_value_adj[k] for k in new_name[0:200]}
+factor_value_adj2 = {k: factor_value_adj[k] for k in new_name[200:400]}
+factor_value_adj3 = {k: factor_value_adj[k] for k in new_name[400:600]}
+factor_value_adj4 = {k: factor_value_adj[k] for k in new_name[600:845]}
 
 # 保存因子值
 f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_wang_20170101-20210228/all_fac_wang1_20170101-20210228.pkl', 'wb')
