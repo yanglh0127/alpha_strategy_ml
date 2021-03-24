@@ -9,7 +9,7 @@ import pickle
 begin = '2017-01-01'
 end = '2021-02-28'
 
-# 读取舒昶因子表现汇总 # user = 'wangfeng:847','yyzhao:304','JiahuLi:191','Alex:195','cshu:97'
+# 读取舒昶因子表现汇总 # user = 'wangfeng:847,847,845','yyzhao:304,220,176','JiahuLi:191,189','Alex:195,194','cshu:97,'
 mine_summary = query_data.get_alphafactors_info(user='cshu')
 print(len(mine_summary))
 # 提取因子名
