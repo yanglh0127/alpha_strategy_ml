@@ -9,7 +9,7 @@ import time
 
 begin_date = '2017-01-01'  # 记得修改
 end_date = '2020-08-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/hfmf/all_eq_1'  # 这边路径记得改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/hfmf/sharpe_weight_1'  # 这边路径记得改
 pm_pat = 'eq_tvwap'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac.pkl')  # 记得修改
 
