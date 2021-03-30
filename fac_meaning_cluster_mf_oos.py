@@ -14,7 +14,7 @@ from utils_func import query_data
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_20170101-20210228_oos'
 fac_meaning = pd.read_excel(data_pat + '/fac_meaning.xlsx', sheet_name='日频资金流向', index_col=0)
 fac_perf = pd.read_excel(data_pat + '/perf_summary_eq_tvwap.xlsx', index_col=0)
-out_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/mf/sharpe_weight_oos'  # 记得修改
+out_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/mf/50%_eq_1_oos'  # 记得修改
 
 # 按tag1的取值分类，按分类的细致程度分为cluster_0, cluster_1, cluster_2
 fac_meaning['cluster_0'] = fac_meaning['tag1']
@@ -30,7 +30,7 @@ fac_meaning['cluster_1'] = fac_meaning['tag1'].apply(lambda g: '日间资金流�
                                                                                                                                            ] else g)))
 
 # 按不同的精细程度记录聚类的各组下因子名、sharp比率、相关性
-cluster_h = 'cluster_0'  # 记得修改
+cluster_h = 'cluster_1'  # 记得修改
 cluster_corr = {}
 cluster_sharp = {}
 for tag in list(fac_meaning[cluster_h].unique()):
@@ -38,7 +38,7 @@ for tag in list(fac_meaning[cluster_h].unique()):
     fac_perf.loc[temp, :].to_csv(out_path + '/' + str(tag) + '.csv')
 
 # 把聚合因子的表现结果汇总
-type = 'sharpe_weight_oos'  # 记得修改
+type = '50%_eq_1_oos'  # 记得修改
 perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/mf/' + str(type) + '/eq_tvwap'
 results_perf = {}
 results_hperf = {}
