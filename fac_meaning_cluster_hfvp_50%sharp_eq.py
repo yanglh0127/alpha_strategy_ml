@@ -76,3 +76,28 @@ f.close()
 # 新聚合因子之间的相关性
 co_rank = cal_factor_corr(fac_comb, out_path)
 print(co_rank)
+
+# 把聚合因子的表现结果汇总
+type = '50%_eq'  # 记得修改
+perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/hfvp/' + str(type) + '/eq_tvwap'
+results_perf = {}
+results_hperf = {}
+results_to = {}
+comb_group = [i for i in os.listdir(perf_path) if os.path.isdir(os.path.join(perf_path, i))]
+for cg in comb_group:
+    nn_dir = os.path.join(perf_path, cg)
+    for j in os.listdir(nn_dir):
+        if j[-3:] == 'pkl':
+            result = pd.read_pickle(os.path.join(nn_dir, j))
+            results_perf[type + '_' + cg] = result['perf']
+            results_hperf[type + '_' + cg] = result['hedged_perf']
+            results_to[type + '_' + cg] = result['turnover_series'].mean()
+
+perf = pd.concat(results_perf, axis=1)
+hperf = pd.concat(results_hperf, axis=1)
+hperf.index = 'H_' + hperf.index
+to = pd.DataFrame.from_dict(results_to, orient='index')
+to.columns = ['turnover']
+perf_summary = pd.concat([perf, hperf])
+perf_summary = pd.concat([perf_summary.T, to], axis=1)
+perf_summary.to_csv(perf_path + '/tp.csv', encoding='utf_8_sig')
