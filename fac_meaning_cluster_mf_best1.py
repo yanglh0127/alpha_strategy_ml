@@ -14,12 +14,12 @@ from utils_func import query_data
 # 聚合方式（四）：按逻辑相关性对同一类下所有因子挑选sharpe比率最高的那个
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_20170101-20210228'
-fac_meaning = pd.read_excel(data_pat + '/fac_meaning.xlsx', sheet_name='高频资金流向', index_col=0)
+fac_meaning = pd.read_excel(data_pat + '/fac_meaning.xlsx', sheet_name='日频资金流向', index_col=0)
 fac_perf = pd.read_excel(data_pat + '/perf_summary_eq_tvwap.xlsx', index_col=0)
 fac_meaning = fac_meaning[fac_meaning['tag1'] != 'delete']
 print(fac_meaning['tag1'].value_counts())
-rank_corr = pd.read_csv('E:/Share/FengWang/Alpha/mine/hfmf_factor/rank_corr.csv', index_col=0)
-out_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/hfmf/best1_1'  # 记得修改
+rank_corr = pd.read_csv('E:/Share/FengWang/Alpha/mine/mf_factor/rank_corr.csv', index_col=0)
+out_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/mf/best1_1'  # 记得修改
 
 # 基础函数，计算因子之间的相关系数
 def cal_factor_corr(fac_dict, pat_str):
@@ -35,8 +35,16 @@ def cal_factor_corr(fac_dict, pat_str):
 
 # 按tag1的取值分类，按分类的细致程度分为cluster_0, cluster_1, cluster_2
 fac_meaning['cluster_0'] = fac_meaning['tag1']
-fac_meaning['cluster_1'] = fac_meaning['tag1'].apply(lambda g: '高频资金流分布' if g in ['日内资金流分布', '收盘资金流行为', '开盘资金流行为', '中间资金流行为'
-                                                                                  ] else ('大单行为' if g in ['平均单笔成交金额', '大单资金流向'] else g))
+fac_meaning['cluster_1'] = fac_meaning['tag1'].apply(lambda g: '日间资金流波动' if g in ['开盘资金流的日间波动',
+                                                                                  '资金流的日间波动',
+                                                                                  '收盘资金流的日间波动',
+                                                                                  '主力净流入的绝对值',
+                                                                                  '主力净流入的时间趋势绝对值'
+                                                                                  ] else ('主力流入流出占比' if g in ['主力流入占比',
+                                                                                                              '主力流出占比'
+                                                                                                              ] else ('开盘净主动买入行为' if g in ['开盘净主动买入行为',
+                                                                                                                                           '开盘和收盘净主动买入之差'
+                                                                                                                                           ] else g)))
 
 # 按不同的精细程度记录聚类的各组下因子名、sharp比率、相关性
 cluster_h = 'cluster_1'  # 记得修改
