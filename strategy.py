@@ -8,8 +8,8 @@ import time
 
 begin_date = '2017-01-01'  # 记得修改
 end_date = '2020-08-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/mf/best1_1'  # 这边路径记得改
-pm_pat = 'eq_tvwap'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/20%_eq'  # 这边路径记得改
+pm_pat = '100_0.2'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac.pkl')  # 记得修改
 
 # 组合权重设置（一）：使用优化函数
@@ -84,10 +84,10 @@ def strategy_backtest_eq(signal):
         strategy_backtest_individual(data_pat + '/' + pm_pat + '/' + str(fac) + '_eq.csv', fac + '_eq')
 
 
-# get_opm_weight(fac_data)
-# strategy_backtest_opm(fac_data)
-get_equal_weight(fac_data)
-strategy_backtest_eq(fac_data)
+get_opm_weight(fac_data)
+strategy_backtest_opm(fac_data)
+# get_equal_weight(fac_data)
+# strategy_backtest_eq(fac_data)
 
 # fac_data = pd.read_pickle('E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_wang_20170101-20210228/all_fac_wang1_20170101-20210228.pkl')
 # len(fac_data)
