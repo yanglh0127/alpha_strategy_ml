@@ -29,6 +29,12 @@ group_hfmf = 'hfmf'
 file_list_hfmf = ['all_eq_1', '50%_eq_1', 'sharpe_weight_1', 'best1_1']
 fac_chosen_hfmf = ['50%_eq_1_大单行为', 'all_eq_1_反转因子改进', '50%_eq_1_高频资金流分布']
 
+group_mf = 'mf'
+file_list_mf = ['all_eq_1', '50%_eq_1', 'sharpe_weight_1', 'best1_1']
+fac_chosen_mf = ['best1_1_反转因子改进', 'best1_1_价格和资金流向的相关性', 'best1_1_开盘净主动买入行为',
+                 'sharpe_weight_1_日间资金流波动', 'best1_1_收盘主力净流入行为', 'best1_1_主力单数行为',
+                 'best1_1_主力净流入占比的偏度', 'sharpe_weight_1_主力流入流出占比']
+
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning'
 
 # 基础函数，计算因子之间的相关系数
@@ -61,7 +67,8 @@ def fac_choose(group, file_list, fac_chosen):
 fac_vp = fac_choose(group_vp, file_list_vp, fac_chosen_vp)
 fac_hfvp = fac_choose(group_hfvp, file_list_hfvp, fac_chosen_hfvp)
 fac_hfmf = fac_choose(group_hfmf, file_list_hfmf, fac_chosen_hfmf)
-fac_all = dict(fac_vp, **fac_hfvp, **fac_hfmf)
+fac_mf = fac_choose(group_mf, file_list_mf, fac_chosen_mf)
+fac_all = dict(fac_vp, **fac_hfvp, **fac_hfmf, **fac_mf)
 f = open(data_pat + '/all_cluster/fac_last.pkl', 'wb')
 pickle.dump(fac_all, f, -1)
 f.close()

@@ -77,7 +77,7 @@ print(co_rank)
 """
 # 把聚合因子的表现结果汇总
 type = 'best1_1'  # 记得修改
-perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/hfmf/' + str(type) + '/eq_tvwap'
+perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/mf/' + str(type) + '/eq_tvwap'
 results_perf = {}
 results_hperf = {}
 results_to = {}
