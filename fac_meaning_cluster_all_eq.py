@@ -70,6 +70,7 @@ f = open(data_pat + '/30%_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
+"""
 # 聚合方式（五）：先选出sharp排名前20%的因子，再进行等权聚合
 fac_choose = fac_meaning[fac_meaning['sharp_ratio'].rank(pct=True) >= 0.8].index.tolist()
 fac_comb = {}
@@ -80,6 +81,21 @@ comb = pd.concat(temp.values())
 fac_comb['20%_eq'] = comb.groupby(comb.index).mean()
 fac_comb['20%_eq'].index = pd.to_datetime(fac_comb['20%_eq'].index)
 f = open(data_pat + '/20%_eq/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
+"""
+# 聚合方式（六）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行等权聚合，遍历
+fac_meaning = fac_meaning.sort_values(by='sharp_ratio',axis=0,ascending=False)
+fac_comb = {}
+for i in range(len(fac_meaning)):
+    tag_list = fac_meaning.index[0:(i+1)]
+    temp = {}
+    for tag in tag_list:
+        temp[tag] = uc.cs_rank(fac_data[tag])
+    comb = pd.concat(temp.values())
+    fac_comb['best' + str(i+1) + '_eq'] = comb.groupby(comb.index).mean()
+    fac_comb['best' + str(i+1) + '_eq'].index = pd.to_datetime(fac_comb['best' + str(i+1) + '_eq'].index)
+f = open(data_pat + '/best_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 
