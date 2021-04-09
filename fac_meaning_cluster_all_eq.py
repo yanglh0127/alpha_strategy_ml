@@ -118,8 +118,10 @@ f = open(data_pat + '/best_sharpe_weight/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
-# 聚合方式（八）：从选出的聚合因子里，遍历所有的组合方式（2**n种），进行等权聚合
-fac_choose = [1, 2, 3, 4, 5]
+"""
+# 聚合方式（八）：从sharpe比率排名前七的聚合因子里，遍历所有的组合方式（2**n种），进行等权聚合
+fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
+fac_choose = fac_meaning.index[0:7]
 comb = []
 for i in range(len(fac_choose)):
     comb.extend(list(combinations(fac_choose, i+1)))
@@ -129,11 +131,31 @@ for com in comb:
     for ele in com:
         temp[ele] = uc.cs_rank(fac_data[ele])
     comb = pd.concat(temp.values())
-    fac_comb['iter' + str(com) + '_eq'] = comb.groupby(comb.index).mean()
-    fac_comb['iter' + str(com) + '_eq'].index = pd.to_datetime(fac_comb['iter' + str(com) + '_eq'].index)
-f = open(data_pat + '/iter_eq/fac.pkl', 'wb')  # 记得修改
+    fac_comb['iter7_' + str(com) + '_eq'] = comb.groupby(comb.index).mean()
+    fac_comb['iter7_' + str(com) + '_eq'].index = pd.to_datetime(fac_comb['iter7_' + str(com) + '_eq'].index)
+f = open(data_pat + '/iter7_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
+"""
+# """
+# 聚合方式（九）：从sharpe比率排名前七的聚合因子里，遍历所有的组合方式（2**n种），进行sharp比率加权聚合
+fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
+fac_choose = fac_meaning.index[0:7]
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_data[ele]) * fac_meaning.loc[ele, 'sharp_ratio']
+    comb = pd.concat(temp.values())
+    fac_comb['iter7_' + str(com) + '_sharpe_weight'] = comb.groupby(comb.index).mean()
+    fac_comb['iter7_' + str(com) + '_sharpe_weight'].index = pd.to_datetime(fac_comb['iter7_' + str(com) + '_sharpe_weight'].index)
+f = open(data_pat + '/iter7_sharpe_weight/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
+# """
 
 """
 # 把聚合因子的表现结果汇总
