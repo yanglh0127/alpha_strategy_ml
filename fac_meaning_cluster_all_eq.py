@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 import pickle
 from ft_platform.factor_process import fetch
 from utils_func import query_data
+from itertools import combinations
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster'
 fac_meaning = pd.read_excel(data_pat + '/all.xlsx', sheet_name='各类聚合因子的表现', index_col=0)
@@ -100,7 +101,7 @@ f = open(data_pat + '/best_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
-# """
+"""
 # 聚合方式（七）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行sharpe比率加权聚合，遍历所有sharpe比率大于0的聚合因子
 fac_meaning = fac_meaning[fac_meaning['sharp_ratio'] > 0]
 fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
@@ -116,7 +117,23 @@ for i in range(len(fac_meaning)):
 f = open(data_pat + '/best_sharpe_weight/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
-# """
+"""
+# 聚合方式（八）：从选出的聚合因子里，遍历所有的组合方式（2**n种），进行等权聚合
+fac_choose = [1, 2, 3, 4, 5]
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_data[ele])
+    comb = pd.concat(temp.values())
+    fac_comb['iter' + str(com) + '_eq'] = comb.groupby(comb.index).mean()
+    fac_comb['iter' + str(com) + '_eq'].index = pd.to_datetime(fac_comb['iter' + str(com) + '_eq'].index)
+f = open(data_pat + '/iter_eq/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
 
 """
 # 把聚合因子的表现结果汇总
