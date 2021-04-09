@@ -84,6 +84,7 @@ f = open(data_pat + '/20%_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
+"""
 # 聚合方式（六）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行等权聚合，遍历
 fac_meaning = fac_meaning.sort_values(by='sharp_ratio',axis=0,ascending=False)
 fac_comb = {}
@@ -98,6 +99,24 @@ for i in range(len(fac_meaning)):
 f = open(data_pat + '/best_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
+"""
+# """
+# 聚合方式（七）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行sharpe比率加权聚合，遍历所有sharpe比率大于0的聚合因子
+fac_meaning = fac_meaning[fac_meaning['sharp_ratio'] > 0]
+fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
+fac_comb = {}
+for i in range(len(fac_meaning)):
+    tag_list = fac_meaning.index[0:(i+1)]
+    temp = {}
+    for tag in tag_list:
+        temp[tag] = uc.cs_rank(fac_data[tag]) * fac_meaning.loc[tag, 'sharp_ratio']
+    comb = pd.concat(temp.values())
+    fac_comb['best' + str(i+1) + '_sharpe_weight'] = comb.groupby(comb.index).mean()
+    fac_comb['best' + str(i+1) + '_sharpe_weight'].index = pd.to_datetime(fac_comb['best' + str(i+1) + '_sharpe_weight'].index)
+f = open(data_pat + '/best_sharpe_weight/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
+# """
 
 """
 # 把聚合因子的表现结果汇总
