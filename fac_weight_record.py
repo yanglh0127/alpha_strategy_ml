@@ -82,9 +82,9 @@ for i in fac_cluster.index:
         fac_structure['vp'][tag] = temp_name
         fac_weight[i] = cal_weight(sub, i.split('_')[0])
 
-with open(data_pat+"/fac_meaning/all_cluster/fac_hierarchy.json","w") as f:
+with open(data_pat + "/fac_meaning/all_cluster/fac_hierarchy.json", "w") as f:
     json.dump(fac_hierarchy, f)
-with open(data_pat+"/fac_meaning/all_cluster/fac_structure.json","w") as f:
+with open(data_pat + "/fac_meaning/all_cluster/fac_structure.json", "w") as f:
     json.dump(fac_structure, f)
-with open(data_pat+"/fac_meaning/all_cluster/fac_weight.json","w") as f:
+with open(data_pat + "/fac_meaning/all_cluster/fac_weight.json", "w") as f:
     json.dump(fac_weight, f)
