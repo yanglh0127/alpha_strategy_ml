@@ -59,7 +59,7 @@ coef = {}
 R_sq = {}
 for date in fac_data['next_re'].index:
     sub_data = new_f.loc[date,]
-    model = sm.OLS(sub_data.iloc[:, -1], sm.add_constant(sub_data.iloc[:, 0:-1]), missing='drop').fit()
+    model = sm.OLS(sub_data.iloc[:, -1], sm.add_constant(sub_data.iloc[:, 0:-1]), missing='drop').fit()  # 市值和行业变量?
     coef[date] = model.params
     R_sq[date] = model.rsquared_adj
     print(date)
