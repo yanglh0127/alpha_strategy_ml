@@ -49,6 +49,11 @@ for k, v in fac_data.items():
     new_f[k] = new_v
 new_f = pd.concat(new_f.values(), axis=1)
 
+f = open(data_pat + '/fac_reshape.pkl', 'wb')  # 记得修改
+pickle.dump(new_f, f, -1)
+f.close()
+# new_f.reset_index().to_csv(data_pat + '/fac_reshape.csv',index=False,encoding='gbk')
+
 # 每天的截面回归估计因子暴露
 coef = {}
 R_sq = {}
@@ -65,6 +70,8 @@ plt.figure()
 plt.plot(r2_param.index, r2_param['R_square_adj'])
 plt.plot(r2_param.index, r2_param['R_square_adj'].rolling(20).mean())
 plt.show()
+coef_param.to_csv(data_pat + '/linear_regress/coef_param.csv',encoding='gbk')
+r2_param.to_csv(data_pat + '/linear_regress/r2_param.csv',encoding='gbk')
 
 # 画出因子暴露时间序列
 le = np.size(coef_param, 0)
@@ -78,6 +85,29 @@ for coef_name in coef_param.columns:
     model = sm.OLS(coef_param[coef_name], [1 for i in range(le)]).fit(cov_type='HAC', cov_kwds={'maxlags': la})
     print(model.summary())  # 有些因子的系数显著为负?多因子回归的影响
 
-# 求收益率预测值
+# 求收益率预测值(只用最近一次截面回归得到的系数)
+fac = {}
 new_f['const'] = 1
-uc.ts_delay(coef_param, 2) * new_f  # 2天后才能用估计出的参数
+new_f = new_f.drop(['next_re'], axis=1)
+coef_param2 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], uc.ts_delay(coef_param, 2)], axis=1)  # 2天后才能用估计出的参数
+coef_param2 = coef_param2.set_index([coef_param2.index, 'level_1'])
+pred = (coef_param2 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred = pred.unstack()
+pred = pred.dropna(how='all')
+fac['nearest'] = pred
+f = open(data_pat + '/linear_regress/nearest/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
+
+
+# 求收益率预测值(用过去20日截面回归得到的系数的平均值)
+fac = {}
+coef_param3 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], uc.ts_delay(coef_param.rolling(20).mean(), 2)], axis=1)  # 2天后才能用估计出的参数
+coef_param3 = coef_param3.set_index([coef_param3.index, 'level_1'])
+pred2 = (coef_param3 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred2 = pred2.unstack()
+pred2 = pred2.dropna(how='all')
+fac['ma_20'] = pred2
+f = open(data_pat + '/linear_regress/ma_20/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
