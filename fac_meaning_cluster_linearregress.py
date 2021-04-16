@@ -111,3 +111,29 @@ fac['ma_20'] = pred2
 f = open(data_pat + '/linear_regress/ma_20/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac, f, -1)
 f.close()
+
+
+# 求收益率预测值(用过去60日截面回归得到的系数的平均值)
+fac = {}
+coef_param4 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], uc.ts_delay(coef_param.rolling(60).mean(), 2)], axis=1)  # 2天后才能用估计出的参数
+coef_param4 = coef_param4.set_index([coef_param4.index, 'level_1'])
+pred3 = (coef_param4 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred3 = pred3.unstack()
+pred3 = pred3.dropna(how='all')
+fac['ma_60'] = pred3
+f = open(data_pat + '/linear_regress/ma_60/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
+
+
+# 求收益率预测值(用过去120日截面回归得到的系数的平均值)
+fac = {}
+coef_param5 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], uc.ts_delay(coef_param.rolling(120).mean(), 2)], axis=1)  # 2天后才能用估计出的参数
+coef_param5 = coef_param5.set_index([coef_param5.index, 'level_1'])
+pred4 = (coef_param5 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred4 = pred4.unstack()
+pred4 = pred4.dropna(how='all')
+fac['ma_120'] = pred4
+f = open(data_pat + '/linear_regress/ma_120/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
