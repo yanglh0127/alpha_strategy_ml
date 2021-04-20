@@ -30,6 +30,7 @@ for type, v in fac_structure.items():
                     if co in corr_choose:
                         other_fac[type][tag].extend([fa for fa in oth[1] if fa not in mine_fac])  # 只纳入除自己因子外的其它人的因子
                         other_fac_all.extend([fa for fa in oth[1] if fa not in mine_fac])
+        other_fac[type][tag] = list(set(other_fac[type][tag]))
 
 with open(data_pat + "/other_fac_structure.json", "w") as f:
     json.dump(other_fac, f)

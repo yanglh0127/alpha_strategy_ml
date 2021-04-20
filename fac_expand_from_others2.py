@@ -16,3 +16,12 @@ other_data3 = pd.read_pickle(data_pat + '/fac_expand/other_facadj_3_20170101-202
 other_data4 = pd.read_pickle(data_pat + '/fac_expand/other_facadj_4_20170101-20210228.pkl')
 other_data5 = pd.read_pickle(data_pat + '/fac_expand/other_facadj_5_20170101-20210228.pkl')
 other_data6 = pd.read_pickle(data_pat + '/fac_expand/other_facadj_6_20170101-20210228.pkl')
+
+with open(data_pat + "/fac_structure.json",'r') as f:
+    fac_structure = json.load(f)
+with open(data_pat + "/other_fac_structure.json",'r') as f:
+    other_fac_structure = json.load(f)
+
+for type, v in other_fac_structure.items():
+    for tag, fac_names in v.items():
+        print(len(fac_names))
