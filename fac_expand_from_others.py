@@ -104,6 +104,5 @@ def cal_factor_corr(fac_dict, pat_str):
     co_rank = co_rank.reindex(co_rank.columns)  # 调整顺序，化为对称阵
     co_rank.to_csv(pat_str + "/rank_corr.csv", index=True, encoding='utf_8_sig')
     return co_rank
-
 cal_factor_corr(all_data, data_pat + '/fac_expand')
 """
