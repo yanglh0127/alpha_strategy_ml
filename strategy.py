@@ -10,7 +10,15 @@ begin_date = '2017-01-01'  # 记得修改, 01-05, 02-08, 04-07, 07-05, 12-27
 end_date = '2020-08-31'  # 记得修改
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_expand'  # 这边路径记得改
 pm_pat = 'eq_tvwap'  # 记得修改
-fac_data = pd.read_pickle(data_pat + '/other_facadj_6_20170101-20210228.pkl')  # 记得修改
+fac_data = pd.read_pickle(data_pat + '/other_facadj_2_20170101-20210228.pkl')  # 记得修改
+
+fac_name = ['factor_20243_vp', 'factor_20081_vp', 'factor_20249_vp', 'factor_20294_turnover',
+            'factor_20235_vp', 'factor_20786_vp', 'factor_20280_momentum', 'factor_20013_value', 'factor_20056_vp',
+            'factor_20558_vp', 'factor_20781_vp', 'factor_10047_vp', 'factor_20051_vp', 'factor_20093_vp', 'factor_50063_valuation',
+            'factor_90007_daily_vp']
+fac_data = {k: v for k, v in fac_data.items() if k in fac_name}
+for k in fac_data.keys():
+    fac_data[k].index = pd.to_datetime(fac_data[k].index)
 
 # 组合权重设置（一）：使用优化函数
 def get_opm_weight_individual(signal=pd.DataFrame(), start_date='2017-01-01', end_date='2020-08-31',

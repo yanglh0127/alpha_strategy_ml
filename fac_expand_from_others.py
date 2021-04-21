@@ -16,15 +16,15 @@ mine_summary = query_data.get_alphafactors_info(user='LihaiYang')
 mine_fac = [a['factor_name'] for a in mine_summary]
 
 # 找出与自己因子相关性较高的其它人的因子
-corr_choose = ['[0.9, 1.0)', '[0.5, 0.9)', '[-0.9, -0.5)', '[-1.0, -0.9)']  # 相关性区间选择
+corr_choose = ['[0.9, 1.0)', '[0.5, 0.9)', '[-0.9, -0.5)', '[-1.0, -0.9)']  # 相关性大小选择
 other_fac = {'hfmf': {}, 'mf': {}, 'vp': {}, 'hfvp': {}}
 other_fac_all = []
 for type, v in fac_structure.items():
     for tag, fac_names in v.items():
         other_fac[type][tag] = []
         for fac_name in fac_names:
-            summ = query_data.get_alphafactors_info(factor_name=fac_name)
-            if type not in ['hfmf', 'mf']:  # 高频资金流因子没有alpha_information?
+            if type not in ['hfmf', 'mf']:  # 高频资金流因子没有alpha_information?暂时不做资金流向类的
+                summ = query_data.get_alphafactors_info(factor_name=fac_name)
                 stats_corr = summ[0]['stats_corr']['TOP2000_2017-06-30_2020-06-30']  # 相关系数的时间区间?
                 for co, oth in stats_corr.items():
                     if co in corr_choose:
