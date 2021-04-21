@@ -8,7 +8,7 @@ import time
 
 begin_date = '2017-01-01'  # 记得修改, 01-05, 02-08, 04-07, 07-05, 12-27
 end_date = '2020-08-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_expand/all_eq'  # 这边路径记得改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_expand/sharpe_weight'  # 这边路径记得改
 pm_pat = 'eq_tvwap'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac.pkl')  # 记得修改
 
