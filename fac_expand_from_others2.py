@@ -87,7 +87,7 @@ f = open(data_pat + '/fac_expand/sharpe_weight/fac.pkl', 'wb')
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
-
+"""
 # 因子聚合方式（三）：同一类别下取sharpe比率最高的
 fac_comb = {}
 for type, v in all_fac.items():
@@ -101,3 +101,4 @@ for type, v in all_fac.items():
 f = open(data_pat + '/fac_expand/best1/fac.pkl', 'wb')
 pickle.dump(fac_comb, f, -1)
 f.close()
+"""
