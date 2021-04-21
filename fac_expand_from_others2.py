@@ -46,3 +46,7 @@ for type, v in all_fac.items():
         print('mean')
         fac_comb['all_eq_1_' + tag + '_' + type] = comb.groupby(comb.index).mean()
         fac_comb['all_eq_1_' + tag + '_' + type].index = pd.to_datetime(fac_comb['all_eq_1_' + tag + '_' + type].index)
+
+f = open(data_pat + '/fac_expand/all_eq/fac.pkl', 'wb')
+pickle.dump(fac_comb, f, -1)
+f.close()
