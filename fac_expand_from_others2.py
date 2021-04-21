@@ -58,14 +58,14 @@ other_fac_perf = pd.read_csv(data_pat + '/fac_expand/perf_summary.csv', index_co
 mine_fac_perf.index = [i[15:-3] for i in mine_fac_perf.index.tolist()]
 other_fac_perf.index = [i[9:-3] for i in other_fac_perf.index.tolist()]
 all_fac_perf = pd.concat([mine_fac_perf, other_fac_perf])
-
+"""
 # 把各类下新的因子池中单因子的表现分表格输出
 for type, v in all_fac.items():
     for tag, fac_names in v.items():
         fac_names = [fa for fa in fac_names if fa not in ['factor_20216_vp', 'factor_90007_daily_vp']]  # 这两个因子似乎略有问题
         temp_perf = all_fac_perf.loc[fac_names]
         temp_perf.to_csv(data_pat + '/fac_expand/' + type + '_' + tag + '.csv', encoding='utf_8_sig')
-
+"""
 """
 # 因子聚合方式（二）：同一类别下sharpe比率为正的进行sharpe加权组合
 fac_comb = {}
@@ -87,3 +87,17 @@ f = open(data_pat + '/fac_expand/sharpe_weight/fac.pkl', 'wb')
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
+
+# 因子聚合方式（三）：同一类别下取sharpe比率最高的
+fac_comb = {}
+for type, v in all_fac.items():
+    for tag, fac_names in v.items():
+        fac_names = [fa for fa in fac_names if fa not in ['factor_20216_vp', 'factor_90007_daily_vp']]  # 这两个因子似乎略有问题
+        fac_name = all_fac_perf.loc[fac_names, 'sharp_ratio'].idxmax()
+        print(type, tag)
+        fac_comb['best1_1_' + tag + '_' + type] = uc.cs_rank(all_data[fac_name])
+        fac_comb['best1_1_' + tag + '_' + type].index = pd.to_datetime(fac_comb['best1_1_' + tag + '_' + type].index)
+
+f = open(data_pat + '/fac_expand/best1/fac.pkl', 'wb')
+pickle.dump(fac_comb, f, -1)
+f.close()
