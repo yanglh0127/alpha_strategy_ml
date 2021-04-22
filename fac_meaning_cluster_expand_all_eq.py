@@ -32,7 +32,7 @@ f = open(data_pat + '/best_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
-"""
+# """
 # 聚合方式（七）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行sharpe比率加权聚合，遍历所有sharpe比率大于0的聚合因子
 fac_meaning = fac_meaning[fac_meaning['sharp_ratio'] > 0]
 fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
@@ -48,7 +48,7 @@ for i in range(len(fac_meaning)):
 f = open(data_pat + '/best_sharpe_weight/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
-"""
+# """
 """
 # 聚合方式（八）：从sharpe比率排名前七的聚合因子里，遍历所有的组合方式（2**n种），进行等权聚合
 fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
