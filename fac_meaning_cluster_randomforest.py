@@ -7,7 +7,7 @@ from utils_func import query_data
 import time
 from sklearn.ensemble import RandomForestClassifier
 
-win = 240  # 选用估计随机森林参数的历史窗口
+win = 60  # 选用估计随机森林参数的历史窗口
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster'
 new_f = pd.read_pickle(data_pat + '/fac_reshape.pkl')
@@ -26,7 +26,7 @@ for i in range(len(trade_days) - 1):
         test_df = new_f.loc[trade_days[(i+1)]].iloc[:, :-1]
         # 随机森林
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        clf = RandomForestClassifier(n_estimators=20, max_depth=3, min_samples_split=50, min_samples_leaf=20).fit(x.values, y.values)
+        clf = RandomForestClassifier(n_estimators=50, max_depth=4, min_samples_split=50, min_samples_leaf=20).fit(x.values, y.values)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         print("correct rate: ", clf.score(x.values, y.values))
         pred = clf.predict_proba(test_df.values)[:, 1]  # 未来n日涨的概率的预测值
