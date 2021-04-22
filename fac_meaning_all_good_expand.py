@@ -39,3 +39,22 @@ for file_name in file_list:
     fac_new = dict(fac_new, **temp)
 fac_new = {k: v for k, v in fac_new.items() if k in fac_chosen_vphfvp_new}
 fac_all = dict(fac_old, **fac_new)
+f = open(data_pat + '/fac_expand/fac_last.pkl', 'wb')
+pickle.dump(fac_all, f, -1)
+f.close()
+
+# 基础函数，计算因子之间的相关系数
+def cal_factor_corr(fac_dict, pat_str):
+    if not os.path.exists(pat_str):  # 判断是否存在文件夹如果不存在则创建为文件夹
+        os.makedirs(pat_str)
+    total_data = pd.concat(fac_dict.values(), keys=fac_dict.keys())
+    total_data = total_data.reset_index().set_index('level_1')
+    corank_total = total_data.groupby(total_data.index).apply(lambda g: g.set_index('level_0').T.corr('spearman'))
+    co_rank = corank_total.groupby(corank_total.index.get_level_values(1)).mean()
+    co_rank = co_rank.reindex(co_rank.columns)  # 调整顺序，化为对称阵
+    co_rank.to_csv(pat_str + "/rank_corr.csv", index=True, encoding='utf_8_sig')
+    return co_rank
+
+# 计算各类因子之间的相关性
+co_rank = cal_factor_corr(fac_all, data_pat + '/fac_expand')
+print(co_rank)
