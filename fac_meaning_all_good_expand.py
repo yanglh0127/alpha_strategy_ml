@@ -39,7 +39,7 @@ for file_name in file_list:
     fac_new = dict(fac_new, **temp)
 fac_new = {k: v for k, v in fac_new.items() if k in fac_chosen_vphfvp_new}
 fac_all = dict(fac_old, **fac_new)
-f = open(data_pat + '/fac_expand/fac_last.pkl', 'wb')
+f = open(data_pat + '/fac_expand/all_cluster/fac_last.pkl', 'wb')
 pickle.dump(fac_all, f, -1)
 f.close()
 
@@ -56,5 +56,5 @@ def cal_factor_corr(fac_dict, pat_str):
     return co_rank
 
 # 计算各类因子之间的相关性
-co_rank = cal_factor_corr(fac_all, data_pat + '/fac_expand')
+co_rank = cal_factor_corr(fac_all, data_pat + '/fac_expand/all_cluster')
 print(co_rank)
