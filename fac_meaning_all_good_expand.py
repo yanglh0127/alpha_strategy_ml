@@ -31,3 +31,11 @@ fac_chosen_mf = ['best1_1_反转因子改进_mf', 'best1_1_价格和资金流向
                  'best1_1_主力净流入占比的偏度_mf', 'sharpe_weight_1_主力流入流出占比_mf']
 
 fac_old = pd.read_pickle(data_pat + '/fac_last.pkl')
+fac_old = {k: v for k, v in fac_old.items() if k in (fac_chosen_mf + fac_chosen_hfmf + fac_chosen_vphfvp_old)}
+
+fac_new = {}
+for file_name in file_list:
+    temp = pd.read_pickle(data_pat + '/fac_expand/' + file_name + '/fac.pkl')
+    fac_new = dict(fac_new, **temp)
+fac_new = {k: v for k, v in fac_new.items() if k in fac_chosen_vphfvp_new}
+fac_all = dict(fac_old, **fac_new)
