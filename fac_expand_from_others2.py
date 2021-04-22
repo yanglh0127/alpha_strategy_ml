@@ -102,3 +102,33 @@ f = open(data_pat + '/fac_expand/best1/fac.pkl', 'wb')
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
+
+# 找出vp和hfvp下各自前50%、30%、15%的因子，进行标记
+sharpe_rank = {}
+for type, v in all_fac.items():
+    temp_r = []
+    for tag, fac_names in v.items():
+        temp_r.extend(fac_names)
+    sharpe_rank[type] = [i for i in list(set(temp_r)) if i not in ['factor_20216_vp', 'factor_90007_daily_vp']]
+    sharpe_rank[type] = all_fac_perf.loc[sharpe_rank[type], 'sharp_ratio'].rank(pct=True)
+
+# 因子聚合方式（四）：同一类别下取sharpe比率最高的前50%进行等权聚合
+fac_comb = {}
+for type, v in all_fac.items():
+    for tag, fac_names in v.items():
+        fac_names = [fa for fa in fac_names if fa not in ['factor_20216_vp', 'factor_90007_daily_vp']]  # 这两个因子似乎略有问题
+        fac_names = [fa for fa in fac_names if sharpe_rank[type].loc[fa] >= 0.5]  # 选出夏普比率排名前50%的
+        print(type, tag, len(fac_names))
+        if len(fac_names) > 0:
+            temp = {}
+            for fac_name in fac_names:
+                temp[fac_name] = uc.cs_rank(all_data[fac_name])
+            print('concat')
+            comb = pd.concat(temp.values())
+            print('mean')
+            fac_comb['50%_eq_1_' + tag + '_' + type] = comb.groupby(comb.index).mean()
+            fac_comb['50%_eq_1_' + tag + '_' + type].index = pd.to_datetime(fac_comb['50%_eq_1_' + tag + '_' + type].index)
+
+f = open(data_pat + '/fac_expand/50%_eq/fac.pkl', 'wb')
+pickle.dump(fac_comb, f, -1)
+f.close()
