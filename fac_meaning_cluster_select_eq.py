@@ -75,9 +75,13 @@ for com in comb:
     print(comb_name)
     fac_comb['iter_' + comb_name + '_eq'] = comb.groupby(comb.index).mean()
     fac_comb['iter_' + comb_name + '_eq'].index = pd.to_datetime(fac_comb['iter_' + comb_name + '_eq'].index)
-# f = open(data_pat + '/iter_eq/fac.pkl', 'wb')  # 记得修改
-# pickle.dump(fac_comb, f, -1)
-# f.close()
+# 拆解
+new_name = list(fac_comb.keys())
+factor_1 = {}
+factor_1 = {k: fac_comb[k] for k in new_name[0:400]}  # 记得修改
+f = open(data_pat + '/fac_select/iter_eq/fac_1.pkl', 'wb')  # 记得修改
+pickle.dump(factor_1, f, -1)
+f.close()
 # """
 """
 # 聚合方式（九）：从sharpe比率排名前七的聚合因子里，遍历所有的组合方式（2**n种），进行sharp比率加权聚合
