@@ -1,7 +1,7 @@
 
 ## 文件路径
 # path_data_asharescore = r'E:\YuanyuanShi\Python\Alpha\data\vp10_new151_alex_novp15_375_SH.csv'
-path_results = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_expand/all_cluster/iter7_sharpe_weight/eq_tvwap'  # 记得修改
+path_results = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_select/best_sharpe_weight/eq_tvwap'  # 记得修改
 
 # 回测参数
 PARAMS_BT = {
