@@ -68,7 +68,7 @@ f = open(data_pat + '/iter7_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
-# """
+"""
 # 聚合方式（九）：从sharpe比率排名前七的聚合因子里，遍历所有的组合方式（2**n种），进行sharp比率加权聚合
 fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
 fac_choose = fac_meaning.index[0:7]
@@ -86,7 +86,45 @@ for com in comb:
 f = open(data_pat + '/iter7_sharpe_weight/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
-# """
+"""
+"""
+# 聚合方式（十）：在expand前sharp比率最高的的七个聚合因子里，遍历所有的组合方式（2**n种），进行等权聚合
+fac_choose = ['50%_eq_1_高频资金流分布_hfmf', 'sharpe_weight_反转因子相关_vp', 'sharpe_weight_1_日间资金流波动_mf',
+              '50%_eq_1_收益率和波动率的相关性_vp', '15%_eq_1_日内成交额分布的稳定性_hfvp',
+              '15%_eq_1_日间成交量(额)的波动率_vp', 'sharpe_weight_1_收盘行为异常_hfvp']
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_data[ele])
+    comb = pd.concat(temp.values())
+    fac_comb['iter7same_' + str(com) + '_eq'] = comb.groupby(comb.index).mean()
+    fac_comb['iter7same_' + str(com) + '_eq'].index = pd.to_datetime(fac_comb['iter7same_' + str(com) + '_eq'].index)
+f = open(data_pat + '/iter7same_eq/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
+"""
+# 聚合方式（十一）：在expand前sharp比率最高的的七个聚合因子里，遍历所有的组合方式（2**n种），进行sharpe加权聚合
+fac_choose = ['50%_eq_1_高频资金流分布_hfmf', 'sharpe_weight_反转因子相关_vp', 'sharpe_weight_1_日间资金流波动_mf',
+              '50%_eq_1_收益率和波动率的相关性_vp', '15%_eq_1_日内成交额分布的稳定性_hfvp',
+              '15%_eq_1_日间成交量(额)的波动率_vp', 'sharpe_weight_1_收盘行为异常_hfvp']
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_data[ele]) * fac_meaning.loc[ele, 'sharp_ratio']
+    comb = pd.concat(temp.values())
+    fac_comb['iter7same_' + str(com) + '_sharpe_weight'] = comb.groupby(comb.index).mean()
+    fac_comb['iter7same_' + str(com) + '_sharpe_weight'].index = pd.to_datetime(fac_comb['iter7same_' + str(com) + '_sharpe_weight'].index)
+f = open(data_pat + '/iter7same_sharpe_weight/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
 
 """
 # 把聚合因子的表现结果汇总
