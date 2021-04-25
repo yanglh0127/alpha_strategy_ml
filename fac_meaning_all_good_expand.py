@@ -11,7 +11,7 @@ import pickle
 from ft_platform.factor_process import fetch
 from utils_func import query_data
 
-# 再扩充的因子池基础上，把各个类下表现好的聚合因子整理到一起
+# 在扩充的因子池基础上，把各个类下表现好的聚合因子整理到一起
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster'
 
