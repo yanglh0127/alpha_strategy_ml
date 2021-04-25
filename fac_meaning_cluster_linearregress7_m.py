@@ -52,8 +52,8 @@ for coef_name in coef_param.columns:
     model = sm.OLS(coef_param[coef_name], [1 for i in range(le)]).fit(cov_type='HAC', cov_kwds={'maxlags': la})
     print(model.summary())  # 有些因子的系数显著为负?多因子回归的影响
 
-
-# 求收益率预测值
+"""
+# 求收益率预测值(过去一个月估计的权重用于下个月)
 coef_param = pd.DataFrame({i: uc.ts_delay(coef_param, 1).loc[i.strftime('%Y-%m')] for i in trade_days}).T  # 整个月都用上个月算出的权重
 fac = {}
 coef_param3 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], coef_param], axis=1)
@@ -63,5 +63,46 @@ pred2 = pred2.unstack()
 pred2 = pred2.dropna(how='all')
 fac['1m_1m'] = pred2
 f = open(data_pat + '/linear_regress_7_m/1m_1m/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
+"""
+"""
+# 求收益率预测值(过去三个月估计的权重用于下个月)
+coef_param = pd.DataFrame({i: uc.ts_delay(coef_param.rolling(3).mean(), 1).loc[i.strftime('%Y-%m')] for i in trade_days}).T  # 整个月都用前三个月算出的权重
+fac = {}
+coef_param3 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], coef_param], axis=1)
+coef_param3 = coef_param3.set_index([coef_param3.index, 'level_1'])
+pred2 = (coef_param3 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred2 = pred2.unstack()
+pred2 = pred2.dropna(how='all')
+fac['3m_1m'] = pred2
+f = open(data_pat + '/linear_regress_7_m/3m_1m/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
+"""
+"""
+# 求收益率预测值(过去六个月估计的权重用于下个月)
+coef_param = pd.DataFrame({i: uc.ts_delay(coef_param.rolling(6).mean(), 1).loc[i.strftime('%Y-%m')] for i in trade_days}).T  # 整个月都用前六个月算出的权重
+fac = {}
+coef_param3 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], coef_param], axis=1)
+coef_param3 = coef_param3.set_index([coef_param3.index, 'level_1'])
+pred2 = (coef_param3 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred2 = pred2.unstack()
+pred2 = pred2.dropna(how='all')
+fac['6m_1m'] = pred2
+f = open(data_pat + '/linear_regress_7_m/6m_1m/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac, f, -1)
+f.close()
+"""
+# 求收益率预测值(过去十二个月估计的权重用于下个月)
+coef_param = pd.DataFrame({i: uc.ts_delay(coef_param.rolling(12).mean(), 1).loc[i.strftime('%Y-%m')] for i in trade_days}).T  # 整个月都用前十二个月算出的权重
+fac = {}
+coef_param3 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], coef_param], axis=1)
+coef_param3 = coef_param3.set_index([coef_param3.index, 'level_1'])
+pred2 = (coef_param3 * new_f).sum(axis=1, min_count=2)  # 至少包含一个变量和一个const
+pred2 = pred2.unstack()
+pred2 = pred2.dropna(how='all')
+fac['12m_1m'] = pred2
+f = open(data_pat + '/linear_regress_7_m/12m_1m/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac, f, -1)
 f.close()
