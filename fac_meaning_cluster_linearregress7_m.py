@@ -53,7 +53,7 @@ for coef_name in coef_param.columns:
     print(model.summary())  # 有些因子的系数显著为负?多因子回归的影响
 
 
-# 求收益率预测值(用过去20日截面回归得到的系数的平均值)
+# 求收益率预测值
 coef_param = pd.DataFrame({i: uc.ts_delay(coef_param, 1).loc[i.strftime('%Y-%m')] for i in trade_days}).T  # 整个月都用上个月算出的权重
 fac = {}
 coef_param3 = pd.concat([new_f.reset_index(level=1).iloc[:, 0], coef_param], axis=1)
