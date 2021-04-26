@@ -23,7 +23,7 @@ f = open(data_pat + '/sharpe_weight/fac_growth.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
-# """
+"""
 fac_meaning = fac_meaning[fac_meaning['tag1'] == 'earning']
 fac_meaning = fac_meaning[fac_meaning['sharp_ratio'] > 0]
 fac_comb = {}
@@ -36,16 +36,18 @@ fac_comb['sharpe_weight_fundamental_earning'].index = pd.to_datetime(fac_comb['s
 f = open(data_pat + '/sharpe_weight/fac_earning.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
-# """
 """
+# """
+fac_meaning = fac_meaning[fac_meaning['tag1'] == 'valuation']
+fac_meaning = fac_meaning[fac_meaning['sharp_ratio'] > 0]
 fac_comb = {}
 temp = {}
-for tag in fac_valuation.keys():
-    temp[tag] = uc.cs_rank(fac_valuation[tag])
+for tag in fac_meaning.index:
+    temp[tag[:-3]] = uc.cs_rank(fac_valuation[tag[:-3]]) * fac_meaning.loc[tag, 'sharp_ratio']
 comb = pd.concat(temp.values())
-fac_comb['all_eq_fundamental_valuation'] = comb.groupby(comb.index).mean()
-fac_comb['all_eq_fundamental_valuation'].index = pd.to_datetime(fac_comb['all_eq_fundamental_valuation'].index)
-f = open(data_pat + '/all_eq/fac_valuation.pkl', 'wb')  # 记得修改
+fac_comb['sharpe_weight_fundamental_valuation'] = comb.groupby(comb.index).mean()
+fac_comb['sharpe_weight_fundamental_valuation'].index = pd.to_datetime(fac_comb['sharpe_weight_fundamental_valuation'].index)
+f = open(data_pat + '/sharpe_weight/fac_valuation.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
-"""
+# """
