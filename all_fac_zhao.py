@@ -15,11 +15,13 @@ print(len(mine_summary))
 # 提取因子名
 fac_name = [i['factor_name'] for i in mine_summary]
 print(len(fac_name))
+# 提取因子类别
+fac_type = {i['factor_name']: i['data_sector'] for i in mine_summary}
+print(len(fac_type))
 # 提取因子ic的正负
-ic = [i['perf'][list(i['perf'].keys())[0]]['IC'] for i in mine_summary]
-print(len(ic))
 ic_sign = [uc.sign(i['perf'][list(i['perf'].keys())[0]]['IC']) for i in mine_summary]
 print(len(ic_sign))
+
 # 提取因子值
 factor_value = fetch.fetch_factor(begin, end, fields=fac_name, standard='clean1_alla', codes=None, df=False)
 # 有些因子数据不足1009个,比较奇怪
@@ -32,6 +34,19 @@ for summa in mine_summary:
         factor_value_adj[summa['factor_name']] = factor_value[summa['factor_name']] * \
                                                  uc.sign(summa['perf'][list(summa['perf'].keys())[0]]['IC'])
 
-f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_zhao_20170101-20210228/all_fac_zhao_20170101-20210228.pkl', 'wb')
-pickle.dump(factor_value_adj, f, -1)
+# f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_zhao_20170101-20210228/all_fac_zhao_20170101-20210228.pkl', 'wb')
+# pickle.dump(factor_value_adj, f, -1)
+# f.close()
+
+factor_valuation = {k: v for k, v in factor_value_adj.items() if fac_type[k] == 'fundamental_valuation'}
+factor_earning = {k: v for k, v in factor_value_adj.items() if fac_type[k] == 'fundamental_earning'}
+factor_growth = {k: v for k, v in factor_value_adj.items() if fac_type[k] == 'fundamental_growth'}
+f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/fundamental/fac_valuation.pkl', 'wb')
+pickle.dump(factor_valuation, f, -1)
+f.close()
+f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/fundamental/factor_earning.pkl', 'wb')
+pickle.dump(factor_earning, f, -1)
+f.close()
+f = open('E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/fundamental/factor_growth.pkl', 'wb')
+pickle.dump(factor_growth, f, -1)
 f.close()

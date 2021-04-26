@@ -128,8 +128,8 @@ f.close()
 
 """
 # 把聚合因子的表现结果汇总
-type = '50%_eq'  # 记得修改
-perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/' + str(type) + '/eq_tvwap'
+type = 'iter7same_eq'  # 记得修改
+perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_expand/all_cluster/' + str(type) + '/eq_tvwap'
 results_perf = {}
 results_hperf = {}
 results_to = {}
@@ -139,9 +139,9 @@ for cg in comb_group:
     for j in os.listdir(nn_dir):
         if j[-3:] == 'pkl':
             result = pd.read_pickle(os.path.join(nn_dir, j))
-            results_perf[type + '_' + cg] = result['perf']
-            results_hperf[type + '_' + cg] = result['hedged_perf']
-            results_to[type + '_' + cg] = result['turnover_series'].mean()
+            results_perf[cg] = result['perf']
+            results_hperf[cg] = result['hedged_perf']
+            results_to[cg] = result['turnover_series'].mean()
 
 perf = pd.concat(results_perf, axis=1)
 hperf = pd.concat(results_hperf, axis=1)
