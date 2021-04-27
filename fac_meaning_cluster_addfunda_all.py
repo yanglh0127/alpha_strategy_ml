@@ -26,3 +26,54 @@ for way in ['all_eq', '50%_eq', 'sharpe_weight']:
 fac_fundamental = {k: v for k, v in fac_fundamental.items() if k in ['50%_eq_fundamental_growth',
                                                                      '50%_eq_fundamental_earning',
                                                                      'sharpe_weight_fundamental_valuation']}
+fac_all = dict(fac_old, **fac_fundamental)
+"""
+# 基础函数，计算因子之间的相关系数
+def cal_factor_corr(fac_dict, pat_str):
+    if not os.path.exists(pat_str):  # 判断是否存在文件夹如果不存在则创建为文件夹
+        os.makedirs(pat_str)
+    total_data = pd.concat(fac_dict.values(), keys=fac_dict.keys())
+    total_data = total_data.reset_index().set_index('level_1')
+    corank_total = total_data.groupby(total_data.index).apply(lambda g: g.set_index('level_0').T.corr('spearman'))
+    co_rank = corank_total.groupby(corank_total.index.get_level_values(1)).mean()
+    co_rank = co_rank.reindex(co_rank.columns)  # 调整顺序，化为对称阵
+    co_rank.to_csv(pat_str + "/rank_corr.csv", index=True, encoding='utf_8_sig')
+    return co_rank
+
+cal_factor_corr(fac_all, data_pat + '/fac_addfunda')
+"""
+"""
+# 基本面的3类聚合因子，遍历所有组合，进行等权聚合
+fac_choose = list(fac_fundamental.keys())
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_fundamental[ele])
+    comb = pd.concat(temp.values())
+    fac_comb['iter_funda_' + str(com) + '_eq'] = comb.groupby(comb.index).mean()
+    fac_comb['iter_funda_' + str(com) + '_eq'].index = pd.to_datetime(fac_comb['iter_funda_' + str(com) + '_eq'].index)
+f = open(data_pat + '/fac_addfunda/iter_funda_eq/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
+"""
+
+# 基本面的3类聚合因子，遍历所有组合，进行等权聚合
+fac_choose = list(fac_fundamental.keys())
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_fundamental[ele]) * fac_meaning.loc[ele, 'sharp_ratio']
+    comb = pd.concat(temp.values())
+    fac_comb['iter_funda_' + str(com) + '_sharpe_weight'] = comb.groupby(comb.index).mean()
+    fac_comb['iter_funda_' + str(com) + '_sharpe_weight'].index = pd.to_datetime(fac_comb['iter_funda_' + str(com) + '_sharpe_weight'].index)
+f = open(data_pat + '/fac_addfunda/iter_funda_sharpe_weight/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
