@@ -78,6 +78,7 @@ f = open(data_pat + '/fac_addfunda/iter_funda_sharpe_weight/fac.pkl', 'wb')  # �
 pickle.dump(fac_comb, f, -1)
 f.close()
 """
+"""
 # 聚合方式（一）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行等权聚合，遍历
 fac_meaning = fac_meaning.sort_values(by='sharp_ratio',axis=0,ascending=False)
 fac_comb = {}
@@ -91,4 +92,50 @@ for i in range(len(fac_meaning)):
     fac_comb['best' + str(i+1) + '_eq'].index = pd.to_datetime(fac_comb['best' + str(i+1) + '_eq'].index)
 f = open(data_pat + '/fac_addfunda/best_eq/fac.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
+f.close()
+"""
+"""
+# 聚合方式（二）：从夏普比率最高的那个聚合因子开始，依次加入下一个夏普比率最高的聚合因子进行sharpe比率加权聚合，遍历所有sharpe比率大于0的聚合因子
+fac_meaning = fac_meaning[fac_meaning['sharp_ratio'] > 0]
+fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
+fac_comb = {}
+for i in range(len(fac_meaning)):
+    tag_list = fac_meaning.index[0:(i+1)]
+    temp = {}
+    for tag in tag_list:
+        temp[tag] = uc.cs_rank(fac_all[tag]) * fac_meaning.loc[tag, 'sharp_ratio']
+    comb = pd.concat(temp.values())
+    fac_comb['best' + str(i+1) + '_sharpe_weight'] = comb.groupby(comb.index).mean()
+    fac_comb['best' + str(i+1) + '_sharpe_weight'].index = pd.to_datetime(fac_comb['best' + str(i+1) + '_sharpe_weight'].index)
+f = open(data_pat + '/fac_addfunda/best_sharpe_weight/fac.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
+"""
+# 聚合方式（三）：取出夏普比率排名前十的聚合因子，遍历所有的组合方式（2**n种），进行等权聚合
+fac_meaning = fac_meaning.sort_values(by='sharp_ratio', axis=0, ascending=False)
+fac_choose = fac_meaning.index[0:10]
+comb = []
+for i in range(len(fac_choose)):
+    comb.extend(list(combinations(fac_choose, i+1)))
+fac_comb = {}
+for com in comb:
+    temp = {}
+    comb_name = '('
+    for ele in com:
+        temp[ele] = uc.cs_rank(fac_all[ele])
+        if ele.split('_')[-2] == 'fundamental':
+            comb_name = comb_name + ele.split('_')[-1] + ','
+        else:
+            comb_name = comb_name + ele.split('_')[-2] + ','
+    comb = pd.concat(temp.values())
+    comb_name = comb_name + ')'
+    print(comb_name)
+    fac_comb['iter_' + comb_name + '_eq'] = comb.groupby(comb.index).mean()
+    fac_comb['iter_' + comb_name + '_eq'].index = pd.to_datetime(fac_comb['iter_' + comb_name + '_eq'].index)
+# 拆解
+new_name = list(fac_comb.keys())
+factor_1 = {}
+factor_1 = {k: fac_comb[k] for k in new_name[0:200]}  # 记得修改
+f = open(data_pat + '/fac_addfunda/iter10_eq/fac_1.pkl', 'wb')  # 记得修改
+pickle.dump(factor_1, f, -1)
 f.close()
