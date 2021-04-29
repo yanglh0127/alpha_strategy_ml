@@ -36,17 +36,7 @@ index_re = {k: v.loc[trade_days] for k, v in index_re.items()}
 
 index_re_n = {k: pd.DataFrame(np.tile(v.values, (1, len(list(stock_re[k])))),
                               index=stock_re[k].index, columns=list(stock_re[k])) for k, v in index_re.items()}
-"""
-# 提取因子数据
-list_1 = pd.read_csv(data_pat + '/sector_vp_dailyvolume.csv')
-list_2 = pd.read_csv(data_pat + '/sector_vp_intradayvolume.csv')
-factor_list = list_1['factor_name'].to_list() + list_2['factor_name'].to_list()
-print('fetch')
-fac_data = fetch.fetch_factor(begin, end1, fields=factor_list, standard='clean1_alla', codes=None, df=False)
-f = open(data_pat + '/fac.pkl', 'wb')
-pickle.dump(fac_data, f, -1)
-f.close()
-"""
+
 # 读取因子数据
 fac_old = pd.read_pickle(data_pat + '/fac_last.pkl')
 fac_fundamental = {}
@@ -60,17 +50,6 @@ fac_fundamental = {k: v for k, v in fac_fundamental.items() if k in ['50%_eq_fun
                                                                      '50%_eq_fundamental_earning',
                                                                      'sharpe_weight_fundamental_valuation']}
 fac_data = dict(fac_old, **fac_fundamental)  # 不做标准化应该也没事，后面用的是rank等权聚合
-
-"""
-# top2000股票池
-cap_data = fetch_data.fetch(begin, end1, ['stock_tcap'])
-cap_rank = cap_data['stock_tcap'].rank(axis=1, ascending=False)
-# 每日的top2000股票标记为1，否则为nan
-top2000 = (cap_rank <= 2000).where((cap_rank <= 2000) == 1)  # 2015年8月6日只有1999只?
-
-# 根据top2000股票池把因子值在非2000的置为空值
-fac_data = {k: (v * top2000) for k, v in fac_data.items()}
-"""
 
 # 变化符号，扩充因子
 fac_pos = {(k, 1): v for k, v in fac_data.items()}
