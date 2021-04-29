@@ -7,6 +7,7 @@ from ft_platform.factor_process import fetch
 import json
 from copy import deepcopy
 import numpy as np
+import time
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume'
 
@@ -51,7 +52,7 @@ f.close()
 """
 # 读取因子数据
 fac_data = pd.read_pickle(data_pat + '/fac.pkl')
-# fac_data = {k: fac_data[k] for k in list(fac_data.keys())[0:3]}  # 选出3个
+# fac_data = {k: fac_data[k] for k in list(fac_data.keys())[0:6]}  # 选出6个
 
 # top2000股票池
 cap_data = fetch_data.fetch(begin, end1, ['stock_tcap'])
@@ -71,7 +72,7 @@ for k in fac_data.keys():
 
 # 变化符号，扩充因子
 fac_pos = {(k, 1): v for k, v in fac_data.items()}
-fac_neg = {(k, -1): v for k, v in fac_data.items()}  # + 还是 - ?
+fac_neg = {(k, -1): -v for k, v in fac_data.items()}
 fac_expand = {**fac_pos, **fac_neg}
 
 
@@ -130,9 +131,9 @@ def chose_x_func(wait_delete_xs: dict,
                 x_data_concat_df = wait_delete_xs[(x, a)]
 
                 if len(x_data_df_test) == 0:
-                    x_data_df_test = (a * x_data_concat_df).rank(axis=1)
+                    x_data_df_test = x_data_concat_df.rank(axis=1)
                 else:
-                    x_data_df_test = x_data_df_test.copy() + (a * x_data_concat_df).rank(axis=1)
+                    x_data_df_test = x_data_df_test.copy() + x_data_concat_df.rank(axis=1)
                 # 然后完结
                 y_bar_margin_max = margin
                 if x not in chosen_xs.keys():
@@ -150,6 +151,7 @@ def chose_x_func(wait_delete_xs: dict,
         """
         下面这个每层的循环遍历组合绩效,以后可以改多进程计算来加速
         """
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         for ii, (x, a) in enumerate(wait_delete_xs.keys()):
             try:
                 x_data_df_test_b = x_data_df_test.copy()
