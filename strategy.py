@@ -6,11 +6,11 @@ from alpha_portfolios import config as cfg
 from ft_platform.utils import utils_calculation as uc
 import time
 
-begin_date = '2017-01-01'  # 记得修改, 01-05, 02-08, 04-07, 07-05, 12-27
-end_date = '2020-08-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_addfunda/iter10_eq'  # 这边路径记得改
+begin_date = '2015-01-01'  # 记得修改, 01-05, 02-08, 04-07, 07-05, 12-27
+end_date = '2019-12-31'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume'  # 这边路径记得改
 pm_pat = 'eq_tvwap'  # 记得修改
-fac_data = pd.read_pickle(data_pat + '/fac_5.pkl')  # 记得修改
+fac_data = pd.read_pickle(data_pat + '/fac_comb.pkl')  # 记得修改
 
 
 # 组合权重设置（一）：使用优化函数
@@ -36,7 +36,7 @@ def get_opm_weight_individual(signal=pd.DataFrame(), start_date='2017-01-01', en
 def get_equal_weight_individual(signal=pd.DataFrame(), start_date='2017-01-01', end_date='2020-08-31',
                                 out_path='E:/FT_Users/LihaiYang/Files/factor_comb_data/all_cluster_comb/1_eq.csv'):
     signal = signal[(signal.index >= start_date) & (signal.index <= end_date)]
-    weight = (uc.cs_rank(signal) >= 0.9).astype(int)
+    weight = (uc.cs_rank(signal) >= 0.95).astype(int)  # 记得改回去
     weight = weight.div(weight.sum(axis=1), axis=0)
     weight = weight.where(weight > 0)
     weight = weight.dropna(axis=1, how='all')
@@ -89,8 +89,3 @@ def strategy_backtest_eq(signal):
 # strategy_backtest_opm(fac_data)
 get_equal_weight(fac_data)
 strategy_backtest_eq(fac_data)
-
-# fac_data = pd.read_pickle('E:/FT_Users/LihaiYang/Files/factor_comb_data/all_fac_wang_20170101-20210228/all_fac_wang1_20170101-20210228.pkl')
-# len(fac_data)
-# len([len(v) for k, v in fac_data.items() if len(v) == 1009])
-# [k for k, v in fac_data.items() if len(v) < 1009]

@@ -37,9 +37,8 @@ fac_data = {k: v.loc[trade_days] for k, v in fac_data.items()}
 def add_fac(base_comb, base_fac, wait_delete):
     fac_comb = {}
     for fac_add in wait_delete:
-        temp = {}
+        temp = {k: v for k, v in base_fac.items()}
         temp[fac_add] = uc.cs_rank(fac_data[fac_add])
-        temp[base_comb] = base_fac
         comb = pd.concat(temp.values())
         com_name = '(' + base_comb + ',' + fac_add + ')'
         fac_comb[com_name] = comb.groupby(comb.index).mean()
@@ -110,7 +109,8 @@ fac_info = pd.read_excel(data_pat + '/fac_addfunda/all_addfunda.xlsx', sheet_nam
 # 初始化
 wait_del = fac_info.index.to_list()
 base_com = wait_del[0]
-base_fa = uc.cs_rank(fac_data[base_com])
+base_fa = {}
+base_fa[base_com] = uc.cs_rank(fac_data[base_com])
 base_sharpe = fac_info.loc[base_com, 'sharp_ratio']
 wait_del.remove(base_com)
 
@@ -123,8 +123,8 @@ while(len(wait_del) > 0):
     if new_sharp > base_sharpe:
         base_com = new_com
         base_sharpe = new_sharp
-        base_fa = uc.cs_rank(fac_new[base_com])
         rem = base_com.split(',')[-1][:-1]  # list中要去除的
+        base_fa[rem] = uc.cs_rank(fac_data[rem])
         print("移除 ", rem)
         wait_del.remove(rem)
     else:

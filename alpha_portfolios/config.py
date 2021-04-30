@@ -5,8 +5,8 @@ path_results = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_clu
 
 # 回测参数
 PARAMS_BT = {
-    "buy_commission": 0.0002,  # 买入成本，选择用均价交易时，可以不增加交易冲击，交易冲击默认0.001
-    "sell_commission": 0.0002,  # 卖出成本，选择用均价交易时，可以不考虑交易冲击
+    "buy_commission": 0.0002,  # 买入成本，选择用均价交易时，可以不增加交易冲击，交易冲击默认0.001  # 原本为万分之二
+    "sell_commission": 0.0002,  # 卖出成本，选择用均价交易时，可以不考虑交易冲击  # 原本为万分之二
     "tax_ratio": 0.001,  # 印花税
     "capital": 10000000,  # 虚拟资本, 没考虑股指期货所需要的资金
     "risk_free_rate": 0.0,  # 无风险利率 (not percentage)

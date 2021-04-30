@@ -8,6 +8,7 @@ import json
 from copy import deepcopy
 import numpy as np
 import time
+import json
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume'
 
@@ -52,7 +53,6 @@ f.close()
 """
 # 读取因子数据
 fac_data = pd.read_pickle(data_pat + '/fac.pkl')
-# fac_data = {k: fac_data[k] for k in list(fac_data.keys())[0:6]}  # 选出6个
 
 # top2000股票池
 cap_data = fetch_data.fetch(begin, end1, ['stock_tcap'])
@@ -64,7 +64,7 @@ top2000 = (cap_rank <= 2000).where((cap_rank <= 2000) == 1)  # 2015年8月6日�
 fac_data = {k: (v * top2000) for k, v in fac_data.items()}
 
 """
-# 检测因子  394,393,337  # 特别是高频数据，从15年才有数据，有些因子要用到几个月前的数据?
+# 检测因子  390,389,332  # 特别是高频数据，从15年才有数据，有些因子要用到几个月前的数据?
 fac_prob = {k: v for k, v in fac_data.items() if len(v) != len(trade_days)}
 for k in fac_data.keys():
     print(k, fac_data[k].T.describe().mean(axis=1))
@@ -120,13 +120,15 @@ def chose_x_func(wait_delete_xs: dict,
             sorted_xs = deepcopy(y_bar_margin_test)
             x = sorted_xs[0][0]
             a = sorted_xs[0][1]
-            margin = y_bar_margin_test[0][2]
+            margin = y_bar_margin_test[0][2]  # 这里为何不用y_bar_margin_test?
+            r_std = y_bar_margin_test[0][3]  # 添加
+            r_sharpe = margin / r_std  # 添加
 
             if margin < y_bar_margin_max:
                 print("挑选完毕,挑选的因子结果如下", list(chosen_xs.keys()))
                 break
             else:
-                print("    ", "    ", "挑出了最好的因子", x, a, ",绩效为", margin)
+                print("    ", "    ", "挑出了最好的因子", x, a, ",绩效为", margin, ",标准差为", r_std, ",夏普比率为", r_sharpe)  # 更改
                 # 选好了因子,然后把因子值加入组合
                 x_data_concat_df = wait_delete_xs[(x, a)]
 
@@ -172,4 +174,23 @@ def chose_x_func(wait_delete_xs: dict,
             except Exception as e:
                 print("测试时", e)
 
-chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 0)
+chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/10_d/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 0)  # 记得修改
+
+# 读取最后选取的因子文件，生成权重
+print("生成最终因子")
+with open(data_pat + "/10_d/fac_chosen.json",'r') as f:  # 记得修改
+    fac_choose = json.load(f)
+print(fac_choose)
+fac_choose = [(k, v) for k, v in fac_choose.items() if v != 0]
+print(fac_choose)
+fac_expand = {k: v for k, v in fac_expand.items() if k in fac_choose}
+fac_comb = fac_expand[fac_choose[0]].rank(axis=1)
+for k in fac_choose[1:]:
+    fac_comb = fac_comb + fac_expand[k].rank(axis=1)
+a = fac_comb.notna().sum(axis=1)
+print(a.min())
+print(a.max())
+fac_comb = {'fac_choose_comb': fac_comb}
+f = open(data_pat + '/10_d/fac_comb.pkl', 'wb')  # 记得修改
+pickle.dump(fac_comb, f, -1)
+f.close()
