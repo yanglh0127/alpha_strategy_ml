@@ -71,9 +71,10 @@ for k in fac_data.keys():
 """
 
 # 变化符号，扩充因子
-fac_pos = {(k, 1): v for k, v in fac_data.items()}
-fac_neg = {(k, -1): -v for k, v in fac_data.items()}
-fac_expand = {**fac_pos, **fac_neg}
+fac_expand = {}
+for k, v in fac_data.items():
+    fac_expand[(k, 1)] = v
+    fac_expand[(k, -1)] = -v
 
 
 def chose_x_func(wait_delete_xs: dict,
@@ -174,11 +175,11 @@ def chose_x_func(wait_delete_xs: dict,
             except Exception as e:
                 print("测试时", e)
 
-chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/10_d/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 0)  # 记得修改
+chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/5_d/fac_chosen.json', stock_re['5_d'], index_re_n['5_d'], {}, 0)  # 记得修改
 
 # 读取最后选取的因子文件，生成权重
 print("生成最终因子")
-with open(data_pat + "/10_d/fac_chosen.json",'r') as f:  # 记得修改
+with open(data_pat + "/5_d/fac_chosen.json",'r') as f:  # 记得修改
     fac_choose = json.load(f)
 print(fac_choose)
 fac_choose = [(k, v) for k, v in fac_choose.items() if v != 0]
@@ -191,6 +192,6 @@ a = fac_comb.notna().sum(axis=1)
 print(a.min())
 print(a.max())
 fac_comb = {'fac_choose_comb': fac_comb}
-f = open(data_pat + '/10_d/fac_comb.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/5_d/fac_comb.pkl', 'wb')  # 记得修改
 pickle.dump(fac_comb, f, -1)
 f.close()
