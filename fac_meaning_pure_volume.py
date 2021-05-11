@@ -10,10 +10,10 @@ import numpy as np
 import time
 import json
 
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/2017-2019'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/2019'  # 记得修改
 
 # 计算未来1、3、5、10、20日收益率，以开盘1小时tvwap为标准
-begin = '2017-01-01'  # 记得修改
+begin = '2019-01-01'  # 记得修改
 end = '2020-02-28'
 end1 = '2019-12-31'
 data = fetch_data.fetch(begin, end, ['stock_adjtwap_0930_1030'])
