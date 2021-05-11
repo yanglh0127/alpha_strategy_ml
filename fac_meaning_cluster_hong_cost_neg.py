@@ -28,20 +28,27 @@ for way in ['all_eq', '50%_eq', 'sharpe_weight']:
 fac_fundamental = {k: v for k, v in fac_fundamental.items() if k in ['50%_eq_fundamental_growth',
                                                                      '50%_eq_fundamental_earning',
                                                                      'sharpe_weight_fundamental_valuation']}
-fac_data = dict(fac_old, **fac_fundamental)
+fac_org = dict(fac_old, **fac_fundamental)
 trade_days = query_data.get_trade_days('d', from_trade_day=begin, to_trade_day=end)
-fac_data = {k: v.loc[trade_days] for k, v in fac_data.items()}
+fac_org = {k: v.loc[trade_days] for k, v in fac_org.items()}
+
+# 取负号，扩充因子
+fac_data = {}
+for k, v in fac_org.items():
+    fac_data[k] = v
+    fac_data[k + '_neg'] = -v
 
 # 在原来的最优基础上遍历地添加一个
-def add_fac(base_comb, base_fac, wait_delete):
+def add_fac(base_comb, base_fac, wait_delete, not_com):
     fac_comb = {}
     for fac_add in wait_delete:
-        temp = {k: v for k, v in base_fac.items()}
-        temp[fac_add] = uc.cs_rank(fac_data[fac_add])
-        comb = pd.concat(temp.values())
         com_name = '(' + base_comb + ',' + fac_add + ')'
-        fac_comb[com_name] = comb.groupby(comb.index).mean()
-        fac_comb[com_name].index = pd.to_datetime(fac_comb[com_name].index)
+        if com_name != not_com:
+            temp = {k: v for k, v in base_fac.items()}
+            temp[fac_add] = uc.cs_rank(fac_data[fac_add])
+            comb = pd.concat(temp.values())
+            fac_comb[com_name] = comb.groupby(comb.index).mean()
+            fac_comb[com_name].index = pd.to_datetime(fac_comb[com_name].index)
     return fac_comb
 
 
@@ -78,7 +85,7 @@ def test_fac(fac_dict):
         wt = get_equal_weight_individual(fac_dict[fac], begin, end)
         strategy_backtest_individual(wt, fac)
     # 读取因子表现数据
-    perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_addfunda/hong_add_cost/eq_tvwap'
+    perf_path = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/all_cluster/fac_addfunda/hong_add_cost_neg/eq_tvwap'
     results_perf = {}
     results_hperf = {}
     results_to = {}
@@ -106,17 +113,18 @@ def test_fac(fac_dict):
 
 fac_info = pd.read_excel(data_pat + '/fac_addfunda/all_addfunda.xlsx', sheet_name='各类聚合因子的表现', index_col=0)
 # 初始化
-wait_del = fac_info.index.to_list()
-base_com = wait_del[0]
+wait_del = list(fac_data.keys())
+base_com = fac_info.index.to_list()[0]
 base_fa = {}
 base_fa[base_com] = uc.cs_rank(fac_data[base_com])
 base_sharpe = fac_info.loc[base_com, 'sharp_ratio']
 wait_del.remove(base_com)
+not_comb = '(' + base_com + ',' + base_com + '_neg)'  # 不能出现的组合
 
 while(len(wait_del) > 0):
     print("当前最优因子组合: ", base_com, "当前最优夏普比率: ", base_sharpe)
     # 在当前最优的基础上遍历添加一个因子
-    fac_new = add_fac(base_com, base_fa, wait_del)
+    fac_new = add_fac(base_com, base_fa, wait_del, not_comb)
     # 回测因子的策略效果
     new_sharp, new_com = test_fac(fac_new)
     if new_sharp > base_sharpe:

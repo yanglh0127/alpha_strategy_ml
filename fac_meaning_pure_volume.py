@@ -10,10 +10,10 @@ import numpy as np
 import time
 import json
 
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume'
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/2017-2019'  # 记得修改
 
 # 计算未来1、3、5、10、20日收益率，以开盘1小时tvwap为标准
-begin = '2015-01-01'
+begin = '2017-01-01'  # 记得修改
 end = '2020-02-28'
 end1 = '2019-12-31'
 data = fetch_data.fetch(begin, end, ['stock_adjtwap_0930_1030'])
@@ -64,7 +64,7 @@ top2000 = (cap_rank <= 2000).where((cap_rank <= 2000) == 1)  # 2015年8月6日�
 fac_data = {k: (v * top2000) for k, v in fac_data.items()}
 
 """
-# 检测因子  390,389,332  # 特别是高频数据，从15年才有数据，有些因子要用到几个月前的数据?
+# 检测因子  378,377,320  # 特别是高频数据，从15年才有数据，有些因子要用到几个月前的数据?
 fac_prob = {k: v for k, v in fac_data.items() if len(v) != len(trade_days)}
 for k in fac_data.keys():
     print(k, fac_data[k].T.describe().mean(axis=1))
@@ -75,7 +75,7 @@ fac_expand = {}
 for k, v in fac_data.items():
     fac_expand[(k, 1)] = v
     fac_expand[(k, -1)] = -v
-
+del fac_data  # 释放空间
 
 def chose_x_func(wait_delete_xs: dict,
                  x_data_df: pd.DataFrame,
@@ -175,23 +175,4 @@ def chose_x_func(wait_delete_xs: dict,
             except Exception as e:
                 print("测试时", e)
 
-chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/5_d/fac_chosen.json', stock_re['5_d'], index_re_n['5_d'], {}, 0)  # 记得修改
-
-# 读取最后选取的因子文件，生成权重
-print("生成最终因子")
-with open(data_pat + "/5_d/fac_chosen.json",'r') as f:  # 记得修改
-    fac_choose = json.load(f)
-print(fac_choose)
-fac_choose = [(k, v) for k, v in fac_choose.items() if v != 0]
-print(fac_choose)
-fac_expand = {k: v for k, v in fac_expand.items() if k in fac_choose}
-fac_comb = fac_expand[fac_choose[0]].rank(axis=1)
-for k in fac_choose[1:]:
-    fac_comb = fac_comb + fac_expand[k].rank(axis=1)
-a = fac_comb.notna().sum(axis=1)
-print(a.min())
-print(a.max())
-fac_comb = {'fac_choose_comb': fac_comb}
-f = open(data_pat + '/5_d/fac_comb.pkl', 'wb')  # 记得修改
-pickle.dump(fac_comb, f, -1)
-f.close()
+chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/20_d/fac_chosen.json', stock_re['20_d'], index_re_n['20_d'], {}, 0)  # 记得修改
