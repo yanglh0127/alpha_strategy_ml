@@ -4,7 +4,6 @@ import pandas as pd
 import pickle
 from utils_func import query_data
 from ft_platform.factor_process import fetch
-import json
 from copy import deepcopy
 import numpy as np
 import time
@@ -13,10 +12,10 @@ import json
 begin = '2015-01-01'
 end = '2020-12-31'
 
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/15%/2015-2019/10_d'  # 记得修改
 
 # 读取最后选取的因子文件和对应的权重
-with open(data_pat + "/temp/fac_chosen.json",'r') as f:  # 记得修改
+with open(data_pat + "/fac_chosen.json",'r') as f:
     fac_choose = json.load(f)
 fac_choose = [(k, v) for k, v in fac_choose.items() if v != 0]
 print(fac_choose)
@@ -44,6 +43,6 @@ a = fac_comb.notna().sum(axis=1)
 print(a.min())
 print(a.max())
 fac_comb = {'fac_choose_comb': fac_comb}
-f = open(data_pat + '/temp/fac_comb.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/fac_comb.pkl', 'wb')
 pickle.dump(fac_comb, f, -1)
 f.close()

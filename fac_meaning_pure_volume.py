@@ -10,7 +10,7 @@ import numpy as np
 import time
 import json
 
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/10%/2015-2019'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/15%/2015-2019'  # 记得修改
 
 # 计算未来1、3、5、10、20日收益率，以开盘1小时tvwap为标准
 begin = '2015-01-01'  # 记得修改
@@ -164,7 +164,7 @@ def chose_x_func(wait_delete_xs: dict,
                     x_data_df_test_b = x_data_concat_df.rank(axis=1)
                 else:
                     x_data_df_test_b = x_data_df_test_b.copy() + x_data_concat_df.rank(axis=1)
-                kkup = pd.DataFrame([x_data_df_test_b.quantile(0.9, axis=1)] * len(x_data_df_test_b.T)).T  # 记得修改
+                kkup = pd.DataFrame([x_data_df_test_b.quantile(0.85, axis=1)] * len(x_data_df_test_b.T)).T  # 记得修改
                 kkup.columns = x_data_df_test_b.columns
                 up_df_bool = x_data_df_test_b >= kkup
                 margin = round((y_data_concat_df[up_df_bool].mean(axis=1).mean() - y_data_concat_df_index.mean(axis=1).mean()) * 10000, 2)
@@ -175,4 +175,4 @@ def chose_x_func(wait_delete_xs: dict,
             except Exception as e:
                 print("测试时", e)
 
-chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/5_d/fac_chosen.json', stock_re['5_d'], index_re_n['5_d'], {}, 0)  # 记得修改
+chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/20_d/fac_chosen.json', stock_re['20_d'], index_re_n['20_d'], {}, 0)  # 记得修改
