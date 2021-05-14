@@ -8,7 +8,7 @@ import time
 
 begin_date = '2015-01-01'  # 记得修改
 end_date = '2019-12-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/15%/2015-2019/10_d'  # 这边路径记得改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/15%/2015-2019/1_d'  # 这边路径记得改
 pm_pat = 'eq_tvwap'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac_comb.pkl')  # 记得修改
 
@@ -87,5 +87,5 @@ def strategy_backtest_eq(signal):
 
 # get_opm_weight(fac_data)
 # strategy_backtest_opm(fac_data)
-# get_equal_weight(fac_data)
+get_equal_weight(fac_data)
 strategy_backtest_eq(fac_data)
