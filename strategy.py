@@ -7,9 +7,9 @@ from ft_platform.utils import utils_calculation as uc
 import time
 
 begin_date = '2015-01-01'  # 记得修改
-end_date = '2021-03-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/pure_volume/15%/2015-2019/20_d'  # 这边路径记得改
-pm_pat = 'eq_tvwap_oos'  # 记得修改
+end_date = '2019-12-31'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/start_point/financial_forword'  # 这边路径记得改
+pm_pat = 'eq_tvwap'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac_comb.pkl')  # 记得修改
 
 
@@ -36,7 +36,7 @@ def get_opm_weight_individual(signal=pd.DataFrame(), start_date='2017-01-01', en
 def get_equal_weight_individual(signal=pd.DataFrame(), start_date='2017-01-01', end_date='2020-08-31',
                                 out_path='E:/FT_Users/LihaiYang/Files/factor_comb_data/all_cluster_comb/1_eq.csv'):
     signal = signal[(signal.index >= start_date) & (signal.index <= end_date)]
-    weight = (uc.cs_rank(signal) >= 0.85).astype(int)  # 记得修改
+    weight = (uc.cs_rank(signal) >= 0.9).astype(int)  # 记得修改
     weight = weight.div(weight.sum(axis=1), axis=0)
     weight = weight.where(weight > 0)
     weight = weight.dropna(axis=1, how='all')
@@ -87,5 +87,5 @@ def strategy_backtest_eq(signal):
 
 # get_opm_weight(fac_data)
 # strategy_backtest_opm(fac_data)
-# get_equal_weight(fac_data)
+get_equal_weight(fac_data)
 strategy_backtest_eq(fac_data)

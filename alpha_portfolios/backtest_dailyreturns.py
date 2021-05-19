@@ -1366,7 +1366,7 @@ class BackTest(object):
         if self.tday_lag>0:
             f_bt_tdays = f_bt_tdays[:-self.tday_lag]
         for i, day in enumerate(f_bt_tdays):  #
-            # print("tday: {}".format(day))  # 这里改为不打印
+            print("tday: {}".format(day))  # 这里改为不打印
             if self.port_create_tday == 'T':
                 date_port = day
             else:
