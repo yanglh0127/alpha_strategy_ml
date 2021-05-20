@@ -8,6 +8,7 @@ from copy import deepcopy
 import numpy as np
 import time
 import json
+from collections import Counter
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group'  # 记得修改
 
@@ -97,6 +98,7 @@ def chose_x_func(wait_delete_xs: dict,
                  y_data_concat_df_index: pd.DataFrame,
                  chosen_xs: dict,
                  start_group: str,  # 添加start_group参数
+                 num_restrict: dict,  # 添加num_restrict参数
                  y_bar_margin: int = 0) -> None:
     """
     :param wait_delete_xs:         等待选择的因子字典, key为(x的名字, x的系数1或-1), value为x的值DataFrame(index为日期,columns为股票代码)
@@ -107,6 +109,7 @@ def chose_x_func(wait_delete_xs: dict,
     :param y_data_concat_df_index: 指数return的值(index为日期,columns为股票代码同上,但是元素值用每天的指数return来替换每天的个股return)
     :param chosen_xs:              已经选择的因子字典(默认为空) e.g {}, 如果已经选好了n个初始因子则{ "factor_100001_vp": 1}
     :param start_group:            选择哪一类作为出发点，如“financial_forward”  # 添加
+    :param num_restrict            要求每类最少选多少个，如{'vp_corr': 2, 'financial_report': 2}，如果不限制则输入{}
     :param y_bar_margin:           平均的超额指数的每个股票的n天周期return的数值,默认初始为0
     :return: None
     """
@@ -140,7 +143,17 @@ def chose_x_func(wait_delete_xs: dict,
             r_std = y_bar_margin_test[0][3]  # 添加
             r_sharpe = margin / r_std  # 添加
 
-            if margin < y_bar_margin_max:
+            # 添加下列八行代码，判断各类因子个数是否满足要求
+            num_flag = 1
+            chosen_type = [classify_group(k) for k, v in chosen_xs.items() if v != 0]  # 有些因子先1后-1，对应的v为0，相当于没选上这个因子
+            for typ, nu in num_restrict.items():
+                if typ in dict(Counter(chosen_type)).keys():
+                    if nu > dict(Counter(chosen_type))[typ]:
+                        num_flag = 0  # 只要有一类的个数不达标，就不行
+                else:
+                    num_flag = 0  # 要是还没选到该类，也不行
+
+            if (margin < y_bar_margin_max) & (num_flag == 1):  # 这里添加一个判断，只有数量满足要求后才终止
                 print("挑选完毕,挑选的因子结果如下", list(chosen_xs.keys()))
                 break
             else:
@@ -194,9 +207,5 @@ def chose_x_func(wait_delete_xs: dict,
             if start_group != '':
                 y_bar_margin_test = [i for i in y_bar_margin_test if classify_group(i[0]) == start_group]
 
-# chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/start_point/no_constraint/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, '', 0)  # 记得修改
-# chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/start_point/financial_forword/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 'financial_forword', 0)  # 记得修改
-# chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/start_point/financial_report/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 'financial_report', 0)  # 记得修改
-# chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/start_point/price_reversal/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 'price_reversal', 0)  # 记得修改
-# chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/start_point/volume_std/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 'volume_std', 0)  # 记得修改
-chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/start_point/vp_corr/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, 'vp_corr', 0)  # 记得修改
+num_rest = {'price_reversal': 2, 'volume_std': 2, 'vp_corr': 2, 'financial_report': 2, 'financial_forword': 2}  # 每类的最低个数要求
+chose_x_func(fac_expand, pd.DataFrame(), data_pat + '/num_restrict/fac_chosen.json', stock_re['10_d'], index_re_n['10_d'], {}, '', num_rest, 0)  # 记得修改
