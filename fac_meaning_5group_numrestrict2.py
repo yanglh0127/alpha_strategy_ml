@@ -160,7 +160,7 @@ def chose_x_func(wait_delete_xs: dict,
                     break
                 else:  # 如果数量还未满足要求，就从还未满足要求的那些类的因子里选，pop掉其它类
                     y_bar_margin_max = 0  # y_bar_margin_max重置为0
-                    for (wdx, sg) in wait_delete_xs.keys():
+                    for (wdx, sg) in list(wait_delete_xs.keys()):
                         if classify_group(wdx) not in not_meet_cond:
                             wait_delete_xs.pop((wdx, sg))
 

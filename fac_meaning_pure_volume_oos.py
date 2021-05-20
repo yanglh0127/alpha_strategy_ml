@@ -12,7 +12,7 @@ import json
 begin = '2015-01-01'
 end = '2021-03-31'
 
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/start_point/financial_forword'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/num_restrict'  # 记得修改
 
 # 读取最后选取的因子文件和对应的权重
 with open(data_pat + "/fac_chosen.json",'r') as f:
