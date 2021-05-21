@@ -7,9 +7,9 @@ from ft_platform.utils import utils_calculation as uc
 import time
 
 begin_date = '2015-01-01'  # 记得修改
-end_date = '2021-03-31'  # 记得修改
-data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/num_restrict'  # 这边路径记得改
-pm_pat = 'eq_tvwap_oos'  # 记得修改
+end_date = '2019-12-31'  # 记得修改
+data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/add_random'  # 这边路径记得改
+pm_pat = 'eq_tvwap'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac_comb.pkl')  # 记得修改
 
 
