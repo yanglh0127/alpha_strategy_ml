@@ -18,7 +18,7 @@ end = '2021-03-31'  # 记得修改
 trade_days = query_data.get_trade_days('d', from_trade_day=begin, to_trade_day=end)
 
 new_f = pd.read_pickle(data_pat + '/new_f.pkl')
-new_f = new_f.dropna(how='any')
+new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
 # 每天的截面回归估计因子暴露
 coef = {}
