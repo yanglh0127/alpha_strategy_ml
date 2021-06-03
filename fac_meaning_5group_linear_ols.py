@@ -29,8 +29,9 @@ for date in trade_days:
     coef[date] = model.params
     R_sq[date] = model.rsquared_adj
     print(date)
-coef_param = pd.concat(coef.values(), axis=1, keys=coef.keys())
-coef_param = pd.DataFrame(coef_param.values.T, index=coef_param.columns, columns=coef_param.index)  # 转置
+
+coef_param = pd.concat(coef.values(), axis=1, keys=coef.keys()).T
+coef_param.index = pd.to_datetime(coef_param.index)
 r2_param = pd.DataFrame(R_sq.values(), index=R_sq.keys(), columns=['R_square_adj'])
 plt.figure()
 plt.plot(r2_param.index, r2_param['R_square_adj'])
@@ -42,7 +43,6 @@ r2_param.to_csv(data_pat + '/ols/r2_param.csv',encoding='gbk')
 # 求收益率预测值
 new_f['const'] = 1
 new_f = new_f.drop(['stock_rela'], axis=1)
-coef_param.index = pd.to_datetime(coef_param.index)
 fac = {}
 
 # 只用最近一次截面回归得到的系数

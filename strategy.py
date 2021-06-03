@@ -7,9 +7,9 @@ from ft_platform.utils import utils_calculation as uc
 import time
 
 begin_date = '2017-01-05'  # 记得修改
-end_date = '2019-12-31'  # 记得修改
+end_date = '2021-03-31'  # 记得修改
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/linear_model/ols'  # 这边路径记得改
-pm_pat = 'eq_tvwap_2017'  # 记得修改
+pm_pat = 'eq_tvwap_2020'  # 记得修改
 fac_data = pd.read_pickle(data_pat + '/fac.pkl')  # 记得修改
 
 
