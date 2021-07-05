@@ -10,8 +10,10 @@ import time
 import json
 from matplotlib import pyplot as plt
 import statsmodels.api as sm
+from sklearn import linear_model
 
 data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/linear_model'  # 记得修改
+rid_cons = 0.2  # 记得修改
 
 begin = '2015-01-01'
 end = '2021-03-31'  # 记得修改
@@ -20,22 +22,24 @@ trade_days = query_data.get_trade_days('d', from_trade_day=begin, to_trade_day=e
 new_f = pd.read_pickle(data_pat + '/new_f.pkl')
 new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
-def pool_ols_pred(ro_wind, pre_wind):
+def pool_ridge_pred(ro_wind, pre_wind, alp):
     prediction = {}
     coef_param = {}
     for i in np.arange((ro_wind + pre_wind), len(trade_days), 1):
         # 截取样本区间pool在一起计算回归系数
         date_roll = pd.to_datetime(trade_days[(i - ro_wind - pre_wind):(i - pre_wind)])
         sub_data = new_f.loc[date_roll, :]
-        model = sm.OLS(sub_data.iloc[:, -1], sm.add_constant(sub_data.iloc[:, 0:-1]), missing='drop').fit()  # 市值和行业变量?
-        coef = model.params
+        # model = sm.OLS(sub_data.iloc[:, -1], sm.add_constant(sub_data.iloc[:, 0:-1]), missing='drop').fit()
+        model = linear_model.Ridge(alpha=alp)
+        model.fit(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1])
+        coef = model.coef_
         coef_param[trade_days[i]] = pd.Series(coef, index=sub_data.iloc[:, 0:-1].columns)  # 保留估计的参数
+        # cons = model.intercept_
         # 当前的因子值
         test_data = new_f.loc[pd.to_datetime(trade_days[i]), :]  # 参数隔（pred_window+1）天后才能用
-        test_data['const'] = 1
         test_data = test_data.drop(['stock_rela'], axis=1)
         # 求y的预测值
-        prediction[trade_days[i]] = (test_data * coef).sum(axis=1)
+        prediction[trade_days[i]] = pd.Series(model.predict(test_data), index=test_data.index)
         print(trade_days[i])
     pred = pd.concat(prediction, axis=1).T
     pred.index = pd.to_datetime(pred.index)
@@ -45,12 +49,15 @@ def pool_ols_pred(ro_wind, pre_wind):
 
 pred_result = {}
 coef_result = {}
-# pred_result['pool_20'] = pool_ols_pred(20, 10)
-# pred_result['pool_60'] = pool_ols_pred(60, 10)
-# pred_result['pool_120'] = pool_ols_pred(120, 10)
-# pred_result['pool_240'] = pool_ols_pred(240, 10)
-pred_result['pool_480'], coef_result['pool_480'] = pool_ols_pred(480, 10)
+# pred_result['pool_20_' + str(rid_cons)] = pool_ridge_pred(20, 10, rid_cons)
+# pred_result['pool_60_' + str(rid_cons)] = pool_ridge_pred(60, 10, rid_cons)
+# pred_result['pool_120_' + str(rid_cons)] = pool_ridge_pred(120, 10, rid_cons)
+# pred_result['pool_240_' + str(rid_cons)] = pool_ridge_pred(240, 10, rid_cons)
+pred_result['pool_480_' + str(rid_cons)], coef_result['pool_480_' + str(rid_cons)] = pool_ridge_pred(480, 10, rid_cons)
 
-f = open(data_pat + '/ols/coef_pool.pkl', 'wb')  # 记得修改
+# f = open(data_pat + '/ridge/fac_' + str(rid_cons) + '.pkl', 'wb')  # 记得修改
+# pickle.dump(pred_result, f, -1)
+# f.close()
+f = open(data_pat + '/ridge/coef_' + str(rid_cons) + '.pkl', 'wb')  # 记得修改
 pickle.dump(coef_result, f, -1)
 f.close()
