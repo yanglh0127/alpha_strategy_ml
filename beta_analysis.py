@@ -5,6 +5,9 @@ data_pat = 'E:/FT_Users/LihaiYang/Files/factor_comb_data/fac_meaning/5group/line
 beta_ols = pd.read_pickle(data_pat + '/ols/coef_pool.pkl')
 des_ols = beta_ols['pool_480'].describe()
 
+beta_ridge = pd.read_pickle(data_pat + '/ridge/coef_0.2.pkl')
+des_ridge = beta_ridge['pool_480_0.2'].describe()
+
 beta_lasso = pd.read_pickle(data_pat + '/lasso/coef_4e-05.pkl')
 des_lasso = beta_lasso['pool_480_4e-05'].describe()
 
@@ -25,6 +28,9 @@ def cs_data(bta):
 
 btacomb_ols = cs_data(beta_ols['pool_480'])
 btacomb_ols.to_csv(data_pat + '/beta_persistence/btacomb_ols.csv',encoding='gbk')
+
+btacomb_ridge = cs_data(beta_ridge['pool_480_0.2'])
+btacomb_ridge.to_csv(data_pat + '/beta_persistence/btacomb_ridge.csv',encoding='gbk')
 
 btacomb_lasso = cs_data(beta_lasso['pool_480_4e-05'])
 btacomb_lasso.to_csv(data_pat + '/beta_persistence/btacomb_lasso.csv',encoding='gbk')
