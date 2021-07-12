@@ -24,7 +24,7 @@ new_f['ud'] = new_f['stock_rela'].apply(lambda g: 1 if g > 0 else 0)
 new_f = new_f.drop(['stock_rela'], axis=1)
 
 pn = 'l1'
-lg_c = 1.0
+lg_c = 0.5
 
 def pool_logit_pred(ro_wind, pre_wind):
     prediction = {}
