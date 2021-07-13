@@ -49,8 +49,14 @@ coef_result = {}
 # pred_result['pool_60'] = pool_ols_pred(60, 10)
 # pred_result['pool_120'] = pool_ols_pred(120, 10)
 # pred_result['pool_240'] = pool_ols_pred(240, 10)
-pred_result['pool_480'], coef_result['pool_480'] = pool_ols_pred(480, 10)
+# pred_result['pool_480'], coef_result['pool_480'] = pool_ols_pred(480, 10)
+# pred_result['pool_960'], coef_result['pool_960'] = pool_ols_pred(960, 10)
+pred_result['pool_1200'], coef_result['pool_1200'] = pool_ols_pred(1200, 10)
 
-f = open(data_pat + '/ols/coef_pool.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/ols/fac_1200.pkl', 'wb')  # 记得修改
+pickle.dump(pred_result, f, -1)
+f.close()
+
+f = open(data_pat + '/ols/coef_1200.pkl', 'wb')  # 记得修改
 pickle.dump(coef_result, f, -1)
 f.close()
