@@ -22,23 +22,21 @@ trade_days = query_data.get_trade_days('d', from_trade_day=begin, to_trade_day=e
 new_f = pd.read_pickle(data_pat + '/new_f.pkl')
 new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
-tree_num = 100
-depth_m = 10
+tree_num = 50
+depth_m = 5
 sample_m = 0.6
 
 def pool_tree_pred(ro_wind, pre_wind):
     prediction = {}
     coef_param = {}
-    update_time = np.arange((ro_wind + pre_wind), len(trade_days), 20)  # 隔20天更新一下权重
     for i in np.arange((ro_wind + pre_wind), len(trade_days), 1):
         # 截取样本区间pool在一起计算回归系数
         date_roll = pd.to_datetime(trade_days[(i - ro_wind - pre_wind):(i - pre_wind)])
         sub_data = new_f.loc[date_roll, :]
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        if i in update_time:
-            rf = RandomForestRegressor(n_estimators=tree_num, max_depth=depth_m, max_features='sqrt', max_samples=sample_m).fit(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1])
-            coef_param[trade_days[i]] = pd.Series(rf.feature_importances_, index=sub_data.iloc[:, 0:-1].columns)  # 保留参数
-            print("correct rate: ", rf.score(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1]))
+        rf = RandomForestRegressor(n_estimators=tree_num, max_depth=depth_m, max_features='sqrt', max_samples=sample_m).fit(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1])
+        coef_param[trade_days[i]] = pd.Series(rf.feature_importances_, index=sub_data.iloc[:, 0:-1].columns)  # 保留参数
+        print("correct rate: ", rf.score(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1]))
 
         test_data = new_f.loc[pd.to_datetime(trade_days[i]), :]  # 参数隔（pred_window+1）天后才能用
         test_data = test_data.drop(['stock_rela'], axis=1)
@@ -54,9 +52,9 @@ pred_result = {}
 coef_result = {}
 pred_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m)], coef_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m)] = pool_tree_pred(480, 10)
 
-f = open(data_pat + '/random_forest/fac_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/random_forest_d/fac_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '.pkl', 'wb')  # 记得修改
 pickle.dump(pred_result, f, -1)
 f.close()
-f = open(data_pat + '/random_forest/coef_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/random_forest_d/coef_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '.pkl', 'wb')  # 记得修改
 pickle.dump(coef_result, f, -1)
 f.close()
