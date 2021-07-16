@@ -23,7 +23,7 @@ new_f = pd.read_pickle(data_pat + '/new_f.pkl')
 new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
 tree_num = 50
-depth_m = 5
+depth_m = 10
 sample_m = 0.6
 
 def pool_tree_pred(ro_wind, pre_wind):
