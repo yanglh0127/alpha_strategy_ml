@@ -20,7 +20,7 @@ trade_days = query_data.get_trade_days('d', from_trade_day=begin, to_trade_day=e
 new_f = pd.read_pickle(data_pat + '/new_f.pkl')
 new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
-hidden_size = (16, 8, 4, 2)
+hidden_size = (8, 4, 2)
 bat = 256
 lear = 0.001
 
