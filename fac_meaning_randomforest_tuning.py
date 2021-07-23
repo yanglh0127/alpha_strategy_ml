@@ -25,14 +25,14 @@ new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
 tree_num = 100
 depth_m = [5, 10]
-feat_m = [13, 20]
+feat_m = [13, 20, 30]
 sample_m = 0.6
 
 def pool_tree_pred(ro_wind, pre_wind):
     tra_val = math.ceil(ro_wind * 0.85)
     prediction = {}
     coef_param = {}
-    update_time = np.arange((ro_wind + pre_wind), len(trade_days), 240)  # 隔240天更新一下权重
+    update_time = np.arange((ro_wind + pre_wind), len(trade_days), 20)  # 隔20天更新一下权重
     for i in np.arange((ro_wind + pre_wind), len(trade_days), 1):
         # 截取样本区间pool在一起计算回归系数
         date_train = pd.to_datetime(trade_days[(i - ro_wind - pre_wind):(i - ro_wind - pre_wind + tra_val)])
@@ -67,11 +67,11 @@ def pool_tree_pred(ro_wind, pre_wind):
 
 pred_result = {}
 coef_result = {}
-pred_result['pool_480'], coef_result['pool_480'] = pool_tree_pred(480, 10)
+pred_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(feat_m)], coef_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(feat_m)] = pool_tree_pred(480, 10)
 
-f = open(data_pat + '/random_forest_tune/fac_2.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/random_forest_tune/fac_' + str(tree_num) + '_' + str(depth_m) + '_' + str(feat_m) + '.pkl', 'wb')  # 记得修改
 pickle.dump(pred_result, f, -1)
 f.close()
-f = open(data_pat + '/random_forest_tune/coef_2.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/random_forest_tune/coef_' + str(tree_num) + '_' + str(depth_m) + '_' + str(feat_m) + '.pkl', 'wb')  # 记得修改
 pickle.dump(coef_result, f, -1)
 f.close()
