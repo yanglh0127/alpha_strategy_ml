@@ -21,10 +21,10 @@ trade_days = query_data.get_trade_days('d', from_trade_day=begin, to_trade_day=e
 new_f = pd.read_pickle(data_pat + '/new_f.pkl')
 new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 
-tree_num = 100
-depth_m = 5
+tree_num = 1000
+depth_m = 1
 learn_v = 0.1
-fea_m = 'auto'  # 'sqrt'
+fea_m = 'auto'
 
 def pool_tree_pred(ro_wind, pre_wind):
     prediction = {}
