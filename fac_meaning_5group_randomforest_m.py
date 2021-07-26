@@ -25,6 +25,7 @@ new_f = new_f.dropna(how='any')  # 所有因子值都不为空
 tree_num = 100
 depth_m = 10
 sample_m = 0.6
+fea_m = 0.3  # ‘sqrt’
 
 def pool_tree_pred(ro_wind, pre_wind):
     prediction = {}
@@ -36,7 +37,7 @@ def pool_tree_pred(ro_wind, pre_wind):
         sub_data = new_f.loc[date_roll, :]
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         if i in update_time:
-            rf = RandomForestRegressor(n_estimators=tree_num, max_depth=depth_m, max_features='sqrt', max_samples=sample_m).fit(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1])
+            rf = RandomForestRegressor(n_estimators=tree_num, max_depth=depth_m, max_features=fea_m, max_samples=sample_m).fit(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1])
             coef_param[trade_days[i]] = pd.Series(rf.feature_importances_, index=sub_data.iloc[:, 0:-1].columns)  # 保留参数
             print("correct rate: ", rf.score(sub_data.iloc[:, 0:-1], sub_data.iloc[:, -1]))
 
@@ -52,11 +53,11 @@ def pool_tree_pred(ro_wind, pre_wind):
 
 pred_result = {}
 coef_result = {}
-pred_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m)], coef_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m)] = pool_tree_pred(480, 10)
+pred_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '_' + str(fea_m)], coef_result['pool_480_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '_' + str(fea_m)] = pool_tree_pred(480, 10)
 
-f = open(data_pat + '/random_forest/fac_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/random_forest/fac_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '_' + str(fea_m) + '.pkl', 'wb')  # 记得修改
 pickle.dump(pred_result, f, -1)
 f.close()
-f = open(data_pat + '/random_forest/coef_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '.pkl', 'wb')  # 记得修改
+f = open(data_pat + '/random_forest/coef_' + str(tree_num) + '_' + str(depth_m) + '_' + str(sample_m) + '_' + str(fea_m) + '.pkl', 'wb')  # 记得修改
 pickle.dump(coef_result, f, -1)
 f.close()
